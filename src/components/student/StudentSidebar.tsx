@@ -1,0 +1,130 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import {
+    Home, PlayCircle, BookOpen, Trophy, TrendingUp,
+    ClipboardList, Award, UserCircle, CreditCard,
+    GraduationCap, X, Menu, Keyboard, ChevronRight
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+
+const menuItems = [
+    { label: "Dashboard", href: "/student", icon: Home },
+    { label: "My Courses", href: "/student/courses", icon: PlayCircle },
+    { label: "My Mock Tests", href: "/student/quizzes", icon: Trophy },
+    { label: "Mock Test Results", href: "/student/results", icon: ClipboardList },
+    { label: "Global Leaderboard", href: "/student/leaderboard", icon: Award },
+
+    { label: "Study Material", href: "/student/materials", icon: BookOpen },
+    { label: "Payments", href: "/student/fees", icon: CreditCard },
+    { label: "Attendance", href: "/student/attendance", icon: ClipboardList },
+    { label: "Certificates", href: "/student/certificates", icon: Award },
+    { label: "Profile", href: "/student/settings", icon: UserCircle },
+];
+
+interface StudentSidebarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export default function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
+    const pathname = usePathname();
+    const { data: session } = useSession();
+
+    // Close sidebar on route change (mobile)
+    useEffect(() => {
+        onClose();
+    }, [pathname]);
+
+    return (
+        <>
+            {/* Mobile backdrop */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+                    onClick={onClose}
+                />
+            )}
+
+            {/* Sidebar */}
+            <aside className={cn(
+                "fixed top-0 left-0 h-full w-72 bg-slate-950 text-white flex flex-col z-50 transition-transform duration-300 ease-in-out border-r border-white/5",
+                "lg:relative lg:translate-x-0 lg:w-64 lg:shrink-0",
+                isOpen ? "translate-x-0" : "-translate-x-full"
+            )}>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-6 border-b border-white/5">
+                    <Link href="/student" className="flex items-center gap-3 group" onClick={onClose}>
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                            <GraduationCap className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="leading-tight">
+                            <p className="text-base font-black tracking-tight text-white leading-none">Student</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Portal v2.0</p>
+                        </div>
+                    </Link>
+                    {/* Close button — mobile only */}
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/5 transition-colors border border-white/10"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto scrollbar-hide">
+                    {menuItems.map((item) => {
+                        const isActive = pathname === item.href || (item.href !== "/student" && pathname.startsWith(item.href));
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    "flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group",
+                                    isActive
+                                        ? "bg-gradient-to-r from-primary via-primary to-secondary text-white shadow-xl shadow-primary/30"
+                                        : "text-slate-500 hover:text-white hover:bg-white/5"
+                                )}
+                            >
+                                <item.icon className={cn("w-5 h-5 shrink-0 transition-transform group-hover:scale-110", isActive ? "text-white" : "text-slate-600")} />
+                                {item.label}
+                                {isActive && (
+                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-sm animate-pulse" />
+                                )}
+                            </Link>
+                        );
+                    })}
+                </nav>
+                
+                {/* Profile Section at Bottom */}
+                <div className="p-4 border-t border-white/5">
+                    <Link 
+                        href="/student/settings"
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group"
+                        onClick={onClose}
+                    >
+                        <div className="w-10 h-10 rounded-xl bg-slate-800 border border-white/10 overflow-hidden relative shrink-0">
+                            {session?.user?.image ? (
+                                <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-500 font-black text-sm">
+                                    {session?.user?.name?.[0] || "S"}
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-black text-white truncate leading-none mb-1">{session?.user?.name || "Student"}</p>
+                            <p className="text-[10px] font-bold text-slate-500 truncate leading-none uppercase tracking-widest">View Profile</p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                    </Link>
+                </div>
+
+            </aside>
+        </>
+    );
+}
