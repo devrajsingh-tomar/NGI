@@ -1,6 +1,6 @@
 import { getDynamicPageData } from "@/app/actions/cms";
 import DynamicRenderer from "@/components/public/DynamicRenderer";
-import { MessageSquare, MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MessageSquare, MapPin, Phone, Mail, Clock, Zap } from "lucide-react";
 
 const staticFallbackContent = (
     <div className="min-h-screen bg-slate-50 pt-40 pb-24 overflow-hidden relative">

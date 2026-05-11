@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Laptop, Award, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Users, Laptop, Award, ShieldCheck, Zap, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";

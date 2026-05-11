@@ -71,7 +71,7 @@ export default function LoginForm({ title, description, role }: LoginFormProps) 
             
             <div className="flex flex-col items-center mb-10 relative z-10">
                 {role !== 'ADMIN' && (
-                    <div className={`w-16 h-16 ${role === 'ADMIN' ? 'bg-rose-500' : 'bg-primary'} rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg transform group-hover:scale-110 transition-all duration-500`}>
+                    <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg transform group-hover:scale-110 transition-all duration-500">
                         <Icon className="w-8 h-8" />
                     </div>
                 )}

@@ -11,6 +11,8 @@ export interface INotice extends Document {
     important: boolean;
     status: 'published' | 'draft' | 'archived';
     isActive: boolean;
+    showInScroller: boolean;
+    date: Date;
     createdAt: Date;
     updatedAt: Date;
 }
