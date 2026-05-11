@@ -237,7 +237,7 @@ export const ModernTypingEngineModule: React.FC<ModernTypingEngineModuleProps> =
     let val = e.target.value;
     const isDeletion = val.length < typedText.length;
 
-    const isHindi = settings.language === 'Hindi' || settings.language === 'Unicode Hindi' || settings.language === 'Krutidev Hindi';
+    const isHindi = settings.language === 'Hindi' || settings.language === 'Unicode Hindi';
     if (isHindi && !isDeletion && val.length > typedText.length) {
         const lastChar = val.slice(-1);
         if (/[\x00-\x7F]/.test(lastChar) && lastChar !== ' ' && lastChar !== '\n') {

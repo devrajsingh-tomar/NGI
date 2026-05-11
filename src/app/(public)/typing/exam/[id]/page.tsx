@@ -259,8 +259,7 @@ export default function TypingExamPage() {
                             {[
                                 { id: 'Remington Gail', name: 'Mangal Remington Gail', sub: 'Professional Standard' },
                                 { id: 'Inscript', name: 'Mangal Inscript', sub: 'Government Standard' },
-                                { id: 'Unicode', name: 'Unicode (Standard)', sub: 'Modern Typing' },
-                                { id: 'Krutidev', name: 'Krutidev 010', sub: 'Legacy Font' }
+                                { id: 'Unicode', name: 'Unicode (Standard)', sub: 'Modern Typing' }
                             ].map((lay) => (
                                 <button 
                                     key={lay.id}
