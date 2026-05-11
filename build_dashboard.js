@@ -539,5 +539,5 @@ export default function AdminTypingDashboard() {
 }
 `;
 
-fs.writeFileSync('e:\\Ngit\\src\\components\\admin\\typing\\AdminTypingDashboard.tsx', code);
+fs.writeFileSync('e:\\ngit\\src\\components\\admin\\typing\\AdminTypingDashboard.tsx', code);
 console.log('Done!');

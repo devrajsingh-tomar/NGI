@@ -4,15 +4,21 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
-import { Keyboard, Zap, Target, AlertTriangle, ChevronDown } from "lucide-react";
+import { Keyboard, Zap, Target, AlertTriangle, ChevronDown, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { isTypingModuleEnabled } from "@/lib/feature-flags";
 
 export default function StudentTypingDashboard() {
   const { data: session } = useSession();
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const isEnabled = isTypingModuleEnabled();
 
   useEffect(() => {
+    if (!isEnabled) {
+      setLoading(false);
+      return;
+    }
     let isMounted = true;
     if (session) {
       fetch("/api/typing/results")
@@ -27,13 +33,39 @@ export default function StudentTypingDashboard() {
       });
     }
     return () => { isMounted = false; };
-  }, [session]);
+  }, [session, isEnabled]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
+    );
+  }
+
+  if (!isEnabled) {
+    return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="max-w-2xl w-full bg-white p-16 rounded-[4rem] shadow-2xl border border-slate-100 text-center space-y-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl" />
+                <div className="w-24 h-24 bg-rose-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto text-rose-500 shadow-xl shadow-rose-500/10">
+                    <ShieldAlert className="w-12 h-12" />
+                </div>
+                <div className="space-y-4">
+                    <h2 className="text-4xl font-black text-slate-900 tracking-tighter italic">Module <span className="text-primary not-italic">Restricted</span></h2>
+                    <p className="text-slate-500 font-bold text-lg leading-relaxed max-w-md mx-auto">
+                        The Typing Examination Engine has been temporarily deactivated for your account profile by the institute administration.
+                    </p>
+                </div>
+                <div className="pt-4">
+                    <Link href="/student">
+                        <button className="h-16 px-12 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-slate-900/20 active:scale-95">
+                            Return to Dashboard
+                        </button>
+                    </Link>
+                </div>
+            </div>
+        </div>
     );
   }
 

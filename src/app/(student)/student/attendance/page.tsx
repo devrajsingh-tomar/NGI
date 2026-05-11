@@ -86,7 +86,7 @@ export default function StudentAttendancePage() {
                     await stopScanner();
                     await handleQRResult(decodedText);
                 },
-                () => {} // ignore errors during scan
+                () => { } // ignore errors during scan
             );
             setCameraPermission("granted");
             setScannerReady(true);
@@ -106,7 +106,7 @@ export default function StudentAttendancePage() {
             try {
                 await html5QrRef.current.stop();
                 html5QrRef.current.clear();
-            } catch (_) {}
+            } catch (_) { }
             html5QrRef.current = null;
         }
         setScannerReady(false);
@@ -186,8 +186,8 @@ export default function StudentAttendancePage() {
             <div className={cn(
                 "flex items-center gap-3 px-5 py-3.5 rounded-2xl border text-sm font-bold",
                 locLoading ? "bg-amber-50 border-amber-200 text-amber-700" :
-                location ? "bg-emerald-50 border-emerald-200 text-emerald-700" :
-                "bg-rose-50 border-rose-200 text-rose-600"
+                    location ? "bg-emerald-50 border-emerald-200 text-emerald-700" :
+                        "bg-rose-50 border-rose-200 text-rose-600"
             )}>
                 {locLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -198,8 +198,8 @@ export default function StudentAttendancePage() {
                 )}
                 <span className="flex-1">
                     {locLoading ? "Detecting your location..." :
-                     location ? `Location verified (±${Math.round(location.accuracy ?? 0)}m accuracy)` :
-                     locError || "Location unavailable"}
+                        location ? `Location verified (±${Math.round(location.accuracy ?? 0)}m accuracy)` :
+                            locError || "Location unavailable"}
                 </span>
                 {!locLoading && !location && (
                     <button onClick={getLocation} className="underline font-black text-xs">Retry</button>

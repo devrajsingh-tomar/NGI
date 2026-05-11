@@ -19,7 +19,7 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
     if (!results || results.length === 0) {
         return (
             <section id="results" className="py-24 bg-white relative">
-                 <div className="container px-6 mx-auto">
+                <div className="container px-6 mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-100 mb-4">
                             <Zap className="w-4 h-4 text-primary animate-pulse" />
@@ -55,7 +55,7 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
                             {title}
                         </h2>
                     </div>
-                    
+
                     <Link href="/results" className="inline-flex items-center gap-2 px-8 h-14 bg-slate-950 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl group">
                         View All Toppers & Exam Results
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -83,11 +83,11 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
                                 <div className="flex items-center gap-4 mb-8">
                                     <div className="relative w-16 h-16 rounded-[1.25rem] overflow-hidden bg-slate-50 border-4 border-slate-50 group-hover:border-primary/5 transition-all duration-500">
                                         {item.studentId?.photoUrl ? (
-                                            <Image 
-                                                src={item.studentId.photoUrl} 
-                                                alt={item.studentId.name} 
-                                                fill 
-                                                className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                                            <Image
+                                                src={item.studentId.photoUrl}
+                                                alt={item.studentId.name}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-slate-300">
@@ -97,7 +97,7 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
                                     </div>
                                     <div className="overflow-hidden">
                                         <h4 className="text-xl font-black text-slate-900 tracking-tight leading-tight group-hover:text-primary transition-colors truncate">
-                                            {item.studentId?.name || "NGITian Topper"}
+                                            {item.studentId?.name || "ngitian Topper"}
                                         </h4>
                                         <p className="text-[10px] font-black text-slate-400 truncate uppercase mt-0.5 tracking-tighter">
                                             {item.mockTestId?.title || "Advanced Proficiency"}
@@ -118,9 +118,9 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
                                             {Math.round((item.score / item.totalMarks) * 100)}%
                                         </div>
                                     </div>
-                                    
+
                                     <div className="w-full bg-slate-50 h-2 rounded-full overflow-hidden">
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ width: 0 }}
                                             whileInView={{ width: `${(item.score / item.totalMarks) * 100}%` }}
                                             viewport={{ once: true }}
@@ -146,9 +146,9 @@ export default function PublicResultsGrid({ results, data }: PublicResultsGridPr
                         </motion.div>
                     ))}
                 </div>
- 
-                 {/* View All Bottom CTA */}
-                 <div className="mt-20 text-center">
+
+                {/* View All Bottom CTA */}
+                <div className="mt-20 text-center">
                     <Link href="/results" className="inline-flex items-center gap-3 text-slate-400 hover:text-primary font-black uppercase tracking-widest text-[11px] transition-colors group">
                         Enter Full results Portal & Hall of Fame
                         <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

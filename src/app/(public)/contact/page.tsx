@@ -7,7 +7,7 @@ const staticFallbackContent = (
         {/* Ambient background elements */}
         <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -ml-96 -mt-96" />
         <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] -mr-96 -mb-96" />
-        
+
         <div className="container-custom relative z-10">
             {/* Architectural Header */}
             <div className="text-center max-w-4xl mx-auto mb-24 space-y-8">
@@ -15,21 +15,21 @@ const staticFallbackContent = (
                     <MessageSquare className="w-4 h-4 text-primary" /> Initiate Dialogue
                 </div>
                 <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter italic">
-                    CONNECT <span className="text-primary not-italic underline decoration-slate-200 underline-offset-8">NGIT</span>
+                    CONNECT <span className="text-primary not-italic underline decoration-slate-200 underline-offset-8">ngit</span>
                 </h1>
                 <p className="text-xl md:text-2xl text-slate-500 font-medium leading-relaxed max-w-3xl mx-auto">
                     Whether you're curious about curriculum architecture or operational protocols, our experts are ready to assist.
                 </p>
             </div>
-            
+
             <div className="grid lg:grid-cols-2 gap-20 items-start max-w-7xl mx-auto">
                 {/* Contact Intelligence Framework */}
                 <div className="space-y-10">
                     <div className="bg-white p-12 rounded-[4rem] shadow-2xl border border-slate-100 relative overflow-hidden group hover:shadow-primary/10 transition-all duration-500">
                         <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -mr-24 -mt-24 group-hover:scale-110 transition-transform duration-700" />
-                        
+
                         <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-12">Access Points</h3>
-                        
+
                         <div className="space-y-12">
                             <div className="flex items-start gap-8 group/item">
                                 <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-3xl flex items-center justify-center group-hover/item:bg-primary group-hover/item:text-white transition-all duration-500 shadow-sm">
@@ -54,7 +54,7 @@ const staticFallbackContent = (
                             <div className="flex items-start gap-8 group/item">
                                 <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-3xl flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all duration-500 shadow-sm">
                                     <MapPin className="w-7 h-7" />
-                               </div>
+                                </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Spatial Identity</p>
                                     <p className="text-2xl font-black text-slate-900 leading-tight tracking-tight">
@@ -94,11 +94,11 @@ const staticFallbackContent = (
                     <div className="absolute -top-6 -right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-xl border-[12px] border-slate-50">
                         <Zap className="w-8 h-8 text-primary animate-pulse" />
                     </div>
-                    
+
                     <h3 className="text-4xl font-black text-slate-900 mb-12 tracking-tighter italic leading-none">
-                        Broadcasting <br/> <span className="text-slate-400 not-italic">System</span>
+                        Broadcasting <br /> <span className="text-slate-400 not-italic">System</span>
                     </h3>
-                    
+
                     <div className="space-y-10">
                         <p className="text-slate-500 font-medium leading-relaxed">
                             For immediate technical assistance or curriculum inquiries, please execute a direct transmission via our tele-navigation channels or synthesize a message below.

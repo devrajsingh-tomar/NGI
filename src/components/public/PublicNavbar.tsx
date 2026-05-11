@@ -7,13 +7,13 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { getHeaderFooterData } from "@/app/actions/layoutContent";
 import { useSession, signOut } from "next-auth/react";
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuItem, 
-    DropdownMenuLabel, 
-    DropdownMenuSeparator, 
-    DropdownMenuTrigger 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
@@ -87,7 +87,7 @@ export default function PublicNavbar() {
                                     N
                                 </div>
                                 <div className="hidden sm:block">
-                                    <h3 className="text-xl font-black tracking-tighter text-slate-900 leading-none">NGIT</h3>
+                                    <h3 className="text-xl font-black tracking-tighter text-slate-900 leading-none">ngit</h3>
                                     <p className="text-[8px] font-black uppercase tracking-[0.3em] text-primary mt-1">Study Zone</p>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@ export default function PublicNavbar() {
                                     <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full" />
                                 </Button>
                             </Link>
-                            
+
                             {session ? (
                                 <div className="flex items-center gap-3">
                                     {session.user.role === "STUDENT" ? (
@@ -149,43 +149,43 @@ export default function PublicNavbar() {
                                         </Link>
                                     )}
 
-                                <div className="relative">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <button type="button" className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-2xl transition-all group border border-transparent hover:border-slate-100 outline-none">
-                                                <div className="text-right hidden xl:block">
-                                                    <p className="text-xs font-black text-slate-900 leading-none group-hover:text-primary transition-colors">
-                                                        {session.user.name}
-                                                    </p>
-                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                                        {session.user.role}
-                                                    </p>
-                                                </div>
-                                                <div className="relative h-10 w-10 rounded-xl p-0 flex items-center justify-center bg-slate-900 text-white font-bold group-hover:bg-primary transition-colors shadow-sm">
-                                                    {session.user.name?.[0]}
-                                                </div>
-                                            </button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-64 rounded-2xl p-2" align="end" sideOffset={8}>
-                                            <DropdownMenuLabel className="font-normal p-4">
-                                                <div className="flex flex-col space-y-1">
-                                                    <p className="text-sm font-black leading-none text-slate-900">{session.user.name}</p>
-                                                    <p className="text-xs font-medium leading-none text-slate-500 mt-1">{session.user.email}</p>
-                                                    <Badge className="w-fit mt-2 bg-orange-50 text-primary border-none shadow-none text-[10px] font-black">{session.user.role}</Badge>
-                                                </div>
-                                            </DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="rounded-xl p-3 font-bold text-slate-600 focus:text-primary focus:bg-primary/5 cursor-pointer" asChild>
-                                                <Link href={session.user.role === 'STUDENT' ? '/student/settings' : '/admin/settings'}>
-                                                    <User className="mr-3 h-4 w-4" /> Profile Details
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="rounded-xl p-3 font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50 cursor-pointer" onClick={() => signOut()}>
-                                                <LogOut className="mr-3 h-4 w-4" /> Sign out
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
+                                    <div className="relative">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <button type="button" className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-2xl transition-all group border border-transparent hover:border-slate-100 outline-none">
+                                                    <div className="text-right hidden xl:block">
+                                                        <p className="text-xs font-black text-slate-900 leading-none group-hover:text-primary transition-colors">
+                                                            {session.user.name}
+                                                        </p>
+                                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                                            {session.user.role}
+                                                        </p>
+                                                    </div>
+                                                    <div className="relative h-10 w-10 rounded-xl p-0 flex items-center justify-center bg-slate-900 text-white font-bold group-hover:bg-primary transition-colors shadow-sm">
+                                                        {session.user.name?.[0]}
+                                                    </div>
+                                                </button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-64 rounded-2xl p-2" align="end" sideOffset={8}>
+                                                <DropdownMenuLabel className="font-normal p-4">
+                                                    <div className="flex flex-col space-y-1">
+                                                        <p className="text-sm font-black leading-none text-slate-900">{session.user.name}</p>
+                                                        <p className="text-xs font-medium leading-none text-slate-500 mt-1">{session.user.email}</p>
+                                                        <Badge className="w-fit mt-2 bg-orange-50 text-primary border-none shadow-none text-[10px] font-black">{session.user.role}</Badge>
+                                                    </div>
+                                                </DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem className="rounded-xl p-3 font-bold text-slate-600 focus:text-primary focus:bg-primary/5 cursor-pointer" asChild>
+                                                    <Link href={session.user.role === 'STUDENT' ? '/student/settings' : '/admin/settings'}>
+                                                        <User className="mr-3 h-4 w-4" /> Profile Details
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="rounded-xl p-3 font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50 cursor-pointer" onClick={() => signOut()}>
+                                                    <LogOut className="mr-3 h-4 w-4" /> Sign out
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </div>
                             ) : (
                                 <Link href="/student/login">

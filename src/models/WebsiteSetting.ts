@@ -28,7 +28,7 @@ export interface IWebsiteSetting extends Document {
 
 const WebsiteSettingSchema = new Schema<IWebsiteSetting>(
     {
-        instituteName: { type: String, required: true, default: "NGIT Educational Platform" },
+        instituteName: { type: String, required: true, default: "ngit Educational Platform" },
         logo: { type: String },
         favicon: { type: String },
         contactEmail: { type: String, default: "info@ngit.in" },
@@ -42,7 +42,7 @@ const WebsiteSettingSchema = new Schema<IWebsiteSetting>(
             youtube: { type: String },
         },
         seoDefaults: {
-            title: { type: String, default: "NGIT - Advanced Educational Platform" },
+            title: { type: String, default: "ngit - Advanced Educational Platform" },
             description: { type: String, default: "Premium online learning and mock test platform." },
             keywords: { type: String, default: "education, courses, mock tests, learning" },
         },

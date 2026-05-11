@@ -163,7 +163,7 @@ export default function AttendancePage() {
             },
             (error) => {
                 console.error("Geolocation error:", error);
-                
+
                 // Fallback for local testing if hardware doesn't provide GPS
                 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                     toast.success("Dev Fallback: Using default location");
@@ -282,18 +282,18 @@ export default function AttendancePage() {
         <div className="space-y-12 pb-20 max-w-7xl mx-auto">
             {/* Batch Selector Header */}
             <div className="bg-slate-900 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl">
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-32 -mt-32 blur-[100px]" />
-                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                     <div>
-                         <h1 className="text-4xl font-black tracking-tight leading-none mb-4">Classroom Attendance</h1>
-                         <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2">
-                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                             Manage multiple entry modes for your batches
-                         </p>
-                     </div>
-                     <div className="w-full md:w-72">
-                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Active Batch</label>
-                         <select
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-32 -mt-32 blur-[100px]" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                        <h1 className="text-4xl font-black tracking-tight leading-none mb-4">Classroom Attendance</h1>
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            Manage multiple entry modes for your batches
+                        </p>
+                    </div>
+                    <div className="w-full md:w-72">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Active Batch</label>
+                        <select
                             className="h-14 w-full bg-white/10 border border-white/20 rounded-2xl px-4 font-black outline-none focus:border-primary text-white backdrop-blur-md"
                             value={selectedCourse}
                             onChange={(e) => setSelectedCourse(e.target.value)}
@@ -302,8 +302,8 @@ export default function AttendancePage() {
                             <option value="" className="text-slate-900">Select Batch</option>
                             {courses.map(c => <option key={c._id} value={c._id} className="text-slate-900">{c.title}</option>)}
                         </select>
-                     </div>
-                 </div>
+                    </div>
+                </div>
             </div>
 
             {/* Mode Tabs */}
@@ -316,11 +316,10 @@ export default function AttendancePage() {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-3 px-8 py-4 rounded-[1.6rem] text-sm font-black transition-all ${
-                            activeTab === tab.id 
-                            ? "bg-white text-primary shadow-xl ring-1 ring-slate-200" 
-                            : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
-                        }`}
+                        className={`flex items-center gap-3 px-8 py-4 rounded-[1.6rem] text-sm font-black transition-all ${activeTab === tab.id
+                                ? "bg-white text-primary shadow-xl ring-1 ring-slate-200"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                            }`}
                     >
                         <tab.icon className="w-5 h-5" />
                         {tab.label}
@@ -359,7 +358,7 @@ export default function AttendancePage() {
                                                             className="w-6 h-6 accent-primary"
                                                         />
                                                     </div>
-                                                    
+
                                                     {useLocation && (
                                                         <Button
                                                             onClick={getCurrentLocation}
@@ -383,12 +382,12 @@ export default function AttendancePage() {
                                         ) : (
                                             <div className="space-y-6">
                                                 <div className="p-8 rounded-[2rem] bg-slate-950 text-white space-y-4">
-                                                     <div className="flex justify-between items-center">
-                                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Session Status</span>
-                                                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                                     </div>
-                                                     <p className="text-2xl font-black tracking-tight">Active & Broadcasting</p>
-                                                     <p className="text-sm font-medium text-slate-400">Batch: {courses.find(c => c._id === selectedCourse)?.title}</p>
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Session Status</span>
+                                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                    </div>
+                                                    <p className="text-2xl font-black tracking-tight">Active & Broadcasting</p>
+                                                    <p className="text-sm font-medium text-slate-400">Batch: {courses.find(c => c._id === selectedCourse)?.title}</p>
                                                 </div>
                                                 <Button
                                                     onClick={handleStopSession}
@@ -437,11 +436,11 @@ export default function AttendancePage() {
 
                 {activeTab === "scan" && (
                     <div className="animate-in fade-in zoom-in-95 duration-500 max-w-2xl mx-auto py-10">
-                        <AttendanceScanner 
-                            batchId={selectedCourse} 
+                        <AttendanceScanner
+                            batchId={selectedCourse}
                             onSuccess={() => {
                                 // optional reload
-                            }} 
+                            }}
                         />
                     </div>
                 )}
@@ -458,25 +457,25 @@ export default function AttendancePage() {
                                 <div className="flex flex-wrap items-center justify-center gap-4">
                                     <div className="relative">
                                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                                        <Input 
-                                            placeholder="Search Students..." 
+                                        <Input
+                                            placeholder="Search Students..."
                                             className="h-12 w-64 pl-11 rounded-xl border-2 border-slate-200 focus:ring-primary font-bold"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                         />
                                     </div>
                                     <div className="relative">
-                                         <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                                         <Input 
-                                            type="date" 
+                                        <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                        <Input
+                                            type="date"
                                             className="h-12 w-44 pl-11 rounded-xl border-2 border-slate-200 font-bold"
                                             value={date}
                                             onChange={(e) => setDate(e.target.value)}
                                         />
                                     </div>
-                                    <Button 
-                                        disabled={saving || !selectedCourse} 
-                                        onClick={handleSave} 
+                                    <Button
+                                        disabled={saving || !selectedCourse}
+                                        onClick={handleSave}
                                         className="h-12 px-8 rounded-xl font-black bg-primary text-white shadow-xl shadow-primary/10 gap-2"
                                     >
                                         {saving ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />} Save Changes
@@ -518,8 +517,8 @@ export default function AttendancePage() {
                                                                 onClick={() => handleStatusChange(s._id, st.s)}
                                                                 className={cn(
                                                                     "px-6 py-2.5 rounded-2xl flex items-center justify-center font-black text-[10px] uppercase tracking-widest transition-all ring-1 ring-inset",
-                                                                    attendance[s._id] === st.s 
-                                                                        ? `bg-slate-900 text-white shadow-xl scale-105 ring-slate-800` 
+                                                                    attendance[s._id] === st.s
+                                                                        ? `bg-slate-900 text-white shadow-xl scale-105 ring-slate-800`
                                                                         : `bg-white text-slate-400 hover:bg-slate-50 ring-slate-100`
                                                                 )}
                                                             >
@@ -532,10 +531,10 @@ export default function AttendancePage() {
                                         )) : (
                                             <tr>
                                                 <td colSpan={2} className="px-10 py-24 text-center">
-                                                     <div className="space-y-4 opacity-40">
-                                                         <Search className="w-12 h-12 mx-auto" />
-                                                         <p className="font-black uppercase tracking-widest text-sm">No students found for this filter</p>
-                                                     </div>
+                                                    <div className="space-y-4 opacity-40">
+                                                        <Search className="w-12 h-12 mx-auto" />
+                                                        <p className="font-black uppercase tracking-widest text-sm">No students found for this filter</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         )}

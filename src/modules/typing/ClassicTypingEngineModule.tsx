@@ -38,9 +38,9 @@ interface ClassicTypingEngineModuleProps {
   showExerciseSwitcher?: boolean;
 }
 
-export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps> = ({ 
+export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps> = ({
   exam,
-  passage, 
+  passage,
   config,
   onComplete,
   userName = "STUDENT",
@@ -51,13 +51,13 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  const { 
-    setPassage, 
-    updateSettings, 
-    isFinished, 
-    wpm, 
-    accuracy, 
-    errorCount, 
+  const {
+    setPassage,
+    updateSettings,
+    isFinished,
+    wpm,
+    accuracy,
+    errorCount,
     typedText,
     setTypedText,
     settings,
@@ -90,51 +90,51 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
   // Load available exams/passages matching current criteria
   useEffect(() => {
     if (!showExerciseSwitcher) return;
-    
+
     if (isBookPractice && exam?.bookId) {
-        // For Book Practice: fetch sibling chapters from the passages API
-        const bId = typeof exam.bookId === 'object' ? exam.bookId._id : exam.bookId;
-        const langParam = internalLanguage ? `&lang=${internalLanguage}` : '';
-        fetch(`/api/typing/practice?type=BOOK&bookId=${bId}${langParam}`)
-          .then(res => res.json())
-          .then(data => {
-            if (Array.isArray(data)) {
-               const sorted = data.sort((a: any, b: any) => a.title.localeCompare(b.title));
-               setPassagesList(sorted);
-               const foundIdx = sorted.findIndex((p: any) => p._id?.toString() === exam._id?.toString());
-               if (foundIdx !== -1) {
-                   setCurrentPassageIndex(foundIdx);
-                   setCurrentExam(sorted[foundIdx]);
-               }
+      // For Book Practice: fetch sibling chapters from the passages API
+      const bId = typeof exam.bookId === 'object' ? exam.bookId._id : exam.bookId;
+      const langParam = internalLanguage ? `&lang=${internalLanguage}` : '';
+      fetch(`/api/typing/practice?type=BOOK&bookId=${bId}${langParam}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            const sorted = data.sort((a: any, b: any) => a.title.localeCompare(b.title));
+            setPassagesList(sorted);
+            const foundIdx = sorted.findIndex((p: any) => p._id?.toString() === exam._id?.toString());
+            if (foundIdx !== -1) {
+              setCurrentPassageIndex(foundIdx);
+              setCurrentExam(sorted[foundIdx]);
             }
-          })
-          .catch(e => console.error("Failed to load book chapters", e));
-        return;
+          }
+        })
+        .catch(e => console.error("Failed to load book chapters", e));
+      return;
     }
 
     // For Gov / Special exams: fetch from exams API
     let query = '';
     if (exam) {
-        const queryLang = exam.language || config.language;
-        if (exam.govExamId) {
-            query = `?govExamId=${exam.govExamId}&language=${queryLang}`;
-            if (exam.difficulty) query += `&difficulty=${exam.difficulty}`;
-        } else if (exam.category === 'SPECIAL') {
-            query = `?category=SPECIAL&language=${queryLang}`;
-        }
+      const queryLang = exam.language || config.language;
+      if (exam.govExamId) {
+        query = `?govExamId=${exam.govExamId}&language=${queryLang}`;
+        if (exam.difficulty) query += `&difficulty=${exam.difficulty}`;
+      } else if (exam.category === 'SPECIAL') {
+        query = `?category=SPECIAL&language=${queryLang}`;
+      }
     }
 
     fetch(`/api/typing/exams${query}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-           const sorted = data.sort((a,b) => a.title.localeCompare(b.title));
-           setPassagesList(sorted);
-           const foundIdx = sorted.findIndex(e => e._id === exam?._id);
-           if (foundIdx !== -1) {
-               setCurrentPassageIndex(foundIdx);
-               setCurrentExam(sorted[foundIdx]);
-           }
+          const sorted = data.sort((a, b) => a.title.localeCompare(b.title));
+          setPassagesList(sorted);
+          const foundIdx = sorted.findIndex(e => e._id === exam?._id);
+          if (foundIdx !== -1) {
+            setCurrentPassageIndex(foundIdx);
+            setCurrentExam(sorted[foundIdx]);
+          }
         }
       })
       .catch(e => console.error("Failed to load related exercises", e));
@@ -149,17 +149,17 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
     setInternalLayout(config.layout || 'English');
     setCurrentExam(exam);
   }, [passage, config.duration, config.language, config.layout, exam]);
-  
+
   // Handle Fullscreen natively
   useEffect(() => {
     if (!containerRef.current) return;
     if (isFullScreen) {
       if (containerRef.current.requestFullscreen) {
-        containerRef.current.requestFullscreen().catch(() => {});
+        containerRef.current.requestFullscreen().catch(() => { });
       }
     } else {
       if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
+        document.exitFullscreen().catch(() => { });
       }
     }
   }, [isFullScreen]);
@@ -179,10 +179,10 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
   // Prevent accidental page leave during official exams
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        if (currentExam && isActive && !isFinished) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
+      if (currentExam && isActive && !isFinished) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -249,25 +249,25 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
       startTest();
     }
     resetIdleTimer();
-    
+
     let val = e.target.value;
     const isDeletion = val.length < typedText.length;
 
     // 0. HINDI MAPPING LOGIC
     const isHindi = settings.language === 'Hindi' || settings.language === 'Unicode Hindi';
     if (isHindi && !isDeletion && val.length > typedText.length) {
-        const lastChar = val.slice(-1);
-        if (/[\x00-\x7F]/.test(lastChar) && lastChar !== ' ' && lastChar !== '\n') {
-            const mapped = mapKeyToHindi(lastChar, settings.layout);
-            val = val.slice(0, -1) + mapped;
-        }
+      const lastChar = val.slice(-1);
+      if (/[\x00-\x7F]/.test(lastChar) && lastChar !== ' ' && lastChar !== '\n') {
+        const mapped = mapKeyToHindi(lastChar, settings.layout);
+        val = val.slice(0, -1) + mapped;
+      }
     }
 
     setTypedText(val);
-    
+
     // Auto-scroll typing textarea
     if (inputRef.current) {
-        inputRef.current.scrollTop = inputRef.current.scrollHeight;
+      inputRef.current.scrollTop = inputRef.current.scrollHeight;
     }
   };
 
@@ -277,7 +277,7 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
         e.preventDefault();
         return;
       }
-      
+
       if (settings.backspaceMode === 'word') {
         // Prevent deleting the space that committed the previous word
         if (typedText.endsWith(' ')) {
@@ -286,10 +286,10 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
         }
       }
     }
-    
+
     // Prevent paste
     if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
-        e.preventDefault();
+      e.preventDefault();
     }
   };
 
@@ -303,9 +303,9 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
   const [bgColor, setBgColor] = useState('#a1c984');
 
   const isHindi = settings.language === 'Hindi' || settings.language === 'Unicode Hindi' || settings.layout === 'Remington Gail' || settings.layout === 'Inscript' || settings.layout === 'Phonetic';
-  
-  const typingFont = isHindi 
-    ? "'Mangal', 'Mangal Regular', 'Arial Unicode MS', sans-serif" 
+
+  const typingFont = isHindi
+    ? "'Mangal', 'Mangal Regular', 'Arial Unicode MS', sans-serif"
     : "'Times New Roman', Times, serif";
 
   const passageWords = internalPassage.split(' ');
@@ -320,7 +320,7 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
         <div className="flex items-center gap-6">
           <div className="flex flex-col">
             <h1 className="text-xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
-              NGIT <span className="text-primary not-italic">EXAM ENGINE</span>
+              ngit <span className="text-primary not-italic">EXAM ENGINE</span>
             </h1>
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1.5">
               Protocol: {currentExam?.title || 'Standardized Typing Assessment'}
@@ -348,17 +348,17 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
           </div>
           <div className="h-12 w-px bg-slate-200" />
           <div className="flex items-center gap-4">
-             <div className="text-right hidden sm:block">
-                <p className="text-xs font-black text-slate-900 leading-none uppercase">{userName}</p>
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verified Candidate</p>
-             </div>
-             <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg border-2 border-white overflow-hidden">
-                {userImage ? (
-                   <img src={userImage} alt="Candidate" className="w-full h-full object-cover" />
-                ) : (
-                   userName[0]
-                )}
-             </div>
+            <div className="text-right hidden sm:block">
+              <p className="text-xs font-black text-slate-900 leading-none uppercase">{userName}</p>
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verified Candidate</p>
+            </div>
+            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg border-2 border-white overflow-hidden">
+              {userImage ? (
+                <img src={userImage} alt="Candidate" className="w-full h-full object-cover" />
+              ) : (
+                userName[0]
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -366,21 +366,21 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
       {/* Secondary Controls Bar */}
       <div className="bg-slate-50 border-b border-slate-200 px-6 py-2 flex justify-between items-center shadow-inner">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={toggleFullScreen} 
+          <button
+            onClick={toggleFullScreen}
             className={cn(
               "text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all flex items-center gap-2 border",
-              isFullScreen 
-                ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100" 
+              isFullScreen
+                ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100"
                 : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
             )}
           >
-             <div className={cn("w-2 h-2 rounded-full", isFullScreen ? "bg-rose-500 animate-pulse" : "bg-slate-400")} />
-             {isFullScreen ? "Deactivate Exam Mode" : "Activate Exam Mode"}
+            <div className={cn("w-2 h-2 rounded-full", isFullScreen ? "bg-rose-500 animate-pulse" : "bg-slate-400")} />
+            {isFullScreen ? "Deactivate Exam Mode" : "Activate Exam Mode"}
           </button>
 
           <div className="h-6 w-px bg-slate-200" />
-          
+
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Typeface</span>
             <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5">
@@ -393,20 +393,20 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
-             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Environment</span>
-             <div className="flex gap-1.5 p-1 bg-white border border-slate-200 rounded-xl">
-               {['#ffffff', '#f8fafc', '#f1f5f9', '#fefce8', '#f0f9ff', '#fff7ed'].map(color => (
-                 <button 
-                   key={color}
-                   onClick={() => setBgColor(color)}
-                   className={cn(
-                     "w-6 h-6 rounded-lg border transition-all hover:scale-110",
-                     bgColor === color ? "border-primary ring-2 ring-primary/20" : "border-slate-200"
-                   )}
-                   style={{ backgroundColor: color }}
-                 />
-               ))}
-             </div>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Environment</span>
+            <div className="flex gap-1.5 p-1 bg-white border border-slate-200 rounded-xl">
+              {['#ffffff', '#f8fafc', '#f1f5f9', '#fefce8', '#f0f9ff', '#fff7ed'].map(color => (
+                <button
+                  key={color}
+                  onClick={() => setBgColor(color)}
+                  className={cn(
+                    "w-6 h-6 rounded-lg border transition-all hover:scale-110",
+                    bgColor === color ? "border-primary ring-2 ring-primary/20" : "border-slate-200"
+                  )}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
           </div>
           <div className="h-6 w-px bg-slate-200" />
           <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
@@ -424,155 +424,152 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
 
       {/* Exercise and Duration Controls – only in official exam mode */}
       {showExerciseSwitcher && (
-      {/* Exercise Framework Switcher */}
-      {showExerciseSwitcher && (
         <div className="bg-slate-900 border-b border-slate-800 p-2.5 flex flex-wrap items-center gap-8 text-sm font-bold text-white shadow-xl relative z-10 px-8">
           <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Duration Profile</span>
-              <select 
-                value={internalDuration} 
-                onChange={(e) => setInternalDuration(Number(e.target.value))}
-                className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer text-xs font-black tracking-widest"
-                disabled={isActive && !isFinished && typedText.length > 0}
-              >
-                {[1, 2, 3, 4, 5, 10, 15, 20].map(min => (
-                  <option key={min} value={min}>{min} MIN CYCLE</option>
-                ))}
-              </select>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Duration Profile</span>
+            <select
+              value={internalDuration}
+              onChange={(e) => setInternalDuration(Number(e.target.value))}
+              className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer text-xs font-black tracking-widest"
+              disabled={isActive && !isFinished && typedText.length > 0}
+            >
+              {[1, 2, 3, 4, 5, 10, 15, 20].map(min => (
+                <option key={min} value={min}>{min} MIN CYCLE</option>
+              ))}
+            </select>
           </div>
           <div className="flex items-center gap-3 flex-1 max-w-xl">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Operational Exercise</span>
-              <div className="flex items-center gap-2 w-full">
-                 <button 
-                    onClick={() => {
-                       if (currentPassageIndex > 0) {
-                          const newIdx = currentPassageIndex - 1;
-                          setCurrentPassageIndex(newIdx);
-                          const newItem = passagesList[newIdx];
-                          setCurrentExam(newItem);
-                          setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
-                          setInternalLanguage(newItem.language || config.language || 'English');
-                          updateSettings({ duration: internalDuration, language: newItem.language || config.language });
-                       }
-                    }}
-                    disabled={currentPassageIndex <= 0 || (isActive && !isFinished && typedText.length > 0)}
-                    className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
-                 >{"<"}</button>
-                 <select 
-                    value={currentPassageIndex}
-                    onChange={(e) => {
-                       const newIdx = Number(e.target.value);
-                       setCurrentPassageIndex(newIdx);
-                        const newItem = passagesList[newIdx];
-                        setCurrentExam(newItem);
-                        setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
-                        setInternalLanguage(newItem.language || config.language || 'English');
-                        updateSettings({ duration: internalDuration, language: newItem.language || config.language });
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Operational Exercise</span>
+            <div className="flex items-center gap-2 w-full">
+              <button
+                onClick={() => {
+                  if (currentPassageIndex > 0) {
+                    const newIdx = currentPassageIndex - 1;
+                    setCurrentPassageIndex(newIdx);
+                    const newItem = passagesList[newIdx];
+                    setCurrentExam(newItem);
+                    setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
+                    setInternalLanguage(newItem.language || config.language || 'English');
+                    updateSettings({ duration: internalDuration, language: newItem.language || config.language });
+                  }
+                }}
+                disabled={currentPassageIndex <= 0 || (isActive && !isFinished && typedText.length > 0)}
+                className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
+              >{"<"}</button>
+              <select
+                value={currentPassageIndex}
+                onChange={(e) => {
+                  const newIdx = Number(e.target.value);
+                  setCurrentPassageIndex(newIdx);
+                  const newItem = passagesList[newIdx];
+                  setCurrentExam(newItem);
+                  setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
+                  setInternalLanguage(newItem.language || config.language || 'English');
+                  updateSettings({ duration: internalDuration, language: newItem.language || config.language });
 
-                    }}
-                    disabled={isActive && !isFinished && typedText.length > 0}
-                    className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none flex-1 focus:ring-2 focus:ring-primary/40 min-w-0 truncate cursor-pointer text-xs font-black tracking-widest uppercase"
-                 >
-                    {passagesList.length > 0 ? (
-                      passagesList.map((p, i) => (
-                         <option key={p._id || i} value={i}>
-                            {isBookPractice ? `Ch. ${i + 1}/${passagesList.length} • ${p.title?.substring(0, 40)}` : `X_${i + 1} • ${p.title?.substring(0, 30)}`}
-                         </option>
-                      ))
-                    ) : (
-                      <option value={0}>SYNCHRONIZING EXERCISES...</option>
-                    )}
-                 </select>
-                 <button 
-                    onClick={() => {
-                       if (currentPassageIndex < passagesList.length - 1) {
-                          const newIdx = currentPassageIndex + 1;
-                          setCurrentPassageIndex(newIdx);
-                           const newItem = passagesList[newIdx];
-                           setCurrentExam(newItem);
-                           setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
-                           setInternalLanguage(newItem.language || config.language || 'English');
-                           updateSettings({ duration: internalDuration, language: newItem.language || config.language });
-                       }
-                    }}
-                    disabled={currentPassageIndex >= passagesList.length - 1 || (isActive && !isFinished && typedText.length > 0)}
-                    className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
-                 >{">"}</button>
-              </div>
+                }}
+                disabled={isActive && !isFinished && typedText.length > 0}
+                className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none flex-1 focus:ring-2 focus:ring-primary/40 min-w-0 truncate cursor-pointer text-xs font-black tracking-widest uppercase"
+              >
+                {passagesList.length > 0 ? (
+                  passagesList.map((p, i) => (
+                    <option key={p._id || i} value={i}>
+                      {isBookPractice ? `Ch. ${i + 1}/${passagesList.length} • ${p.title?.substring(0, 40)}` : `X_${i + 1} • ${p.title?.substring(0, 30)}`}
+                    </option>
+                  ))
+                ) : (
+                  <option value={0}>SYNCHRONIZING EXERCISES...</option>
+                )}
+              </select>
+              <button
+                onClick={() => {
+                  if (currentPassageIndex < passagesList.length - 1) {
+                    const newIdx = currentPassageIndex + 1;
+                    setCurrentPassageIndex(newIdx);
+                    const newItem = passagesList[newIdx];
+                    setCurrentExam(newItem);
+                    setInternalPassage(isBookPractice ? (newItem.content || '') : (newItem.passageId?.content || 'No content found'));
+                    setInternalLanguage(newItem.language || config.language || 'English');
+                    updateSettings({ duration: internalDuration, language: newItem.language || config.language });
+                  }
+                }}
+                disabled={currentPassageIndex >= passagesList.length - 1 || (isActive && !isFinished && typedText.length > 0)}
+                className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
+              >{">"}</button>
+            </div>
           </div>
         </div>
-      )}
       )}
 
       {/* Main Execution Area */}
       <div className="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full min-h-0">
         {/* Source Text Buffer */}
-        <div 
-            ref={passageContainerRef}
-            className="flex-1 relative bg-white border border-slate-200 rounded-[2.5rem] p-10 overflow-y-auto text-slate-800 leading-[1.8] break-words scroll-smooth shadow-sm"
-            style={{ 
-              fontSize: `${fontSize}px`, 
-              fontFamily: typingFont,
-              minHeight: '220px',
-              scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
-            }}
-            onCopy={(e) => config.disableCopyPaste !== false && e.preventDefault()}
+        <div
+          ref={passageContainerRef}
+          className="flex-1 relative bg-white border border-slate-200 rounded-[2.5rem] p-10 overflow-y-auto text-slate-800 leading-[1.8] break-words scroll-smooth shadow-sm"
+          style={{
+            fontSize: `${fontSize}px`,
+            fontFamily: typingFont,
+            minHeight: '220px',
+            scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
+          }}
+          onCopy={(e) => config.disableCopyPaste !== false && e.preventDefault()}
         >
           {settings.highlightMode !== 'none' ? (
             passageWords.map((word, index) => {
               let className = "transition-all duration-200 ";
-              
+
               if (settings.highlightMode === 'word') {
                 if (index === activeWordIndex) {
-                    className += "text-blue-600 font-bold active-word underline decoration-blue-300 decoration-2 underline-offset-4";
+                  className += "text-blue-600 font-bold active-word underline decoration-blue-300 decoration-2 underline-offset-4";
                 } else if (index < activeWordIndex) {
-                    const typedWord = typedWordsArray[index];
-                    const normTypedWord = typedWord.split('').map(normalizeChar).join('');
-                    const normOriginalWord = word.split('').map(normalizeChar).join('');
-                    if (normTypedWord !== normOriginalWord) {
-                        className += "text-red-600 font-bold underline decoration-red-400";
-                    }
+                  const typedWord = typedWordsArray[index];
+                  const normTypedWord = typedWord.split('').map(normalizeChar).join('');
+                  const normOriginalWord = word.split('').map(normalizeChar).join('');
+                  if (normTypedWord !== normOriginalWord) {
+                    className += "text-red-600 font-bold underline decoration-red-400";
+                  }
                 }
-              } 
+              }
               else if (settings.highlightMode === 'word_error') {
-                 if (index < activeWordIndex) {
-                    className += typedWordsArray[index] === word ? "text-emerald-600 font-bold" : "text-rose-600 font-bold underline decoration-rose-400";
-                 } else if (index === activeWordIndex) {
-                    const currentTyped = typedWordsArray[index] || "";
-                    return (
-                        <span key={index} className="active-word text-blue-600 underline decoration-blue-300 decoration-4 underline-offset-8 font-bold">
-                            {word.split('').map((char, charIdx) => {
-                                let charClass = "";
-                                if (charIdx < currentTyped.length) {
-                                    charClass = normalizeChar(char) === normalizeChar(currentTyped[charIdx]) ? "text-emerald-600" : "text-rose-600 bg-rose-50";
-                                }
-                                return <span key={charIdx} className={charClass}>{char}</span>;
-                            })}
-                            {" "}
-                        </span>
-                    );
-                 }
+                if (index < activeWordIndex) {
+                  className += typedWordsArray[index] === word ? "text-emerald-600 font-bold" : "text-rose-600 font-bold underline decoration-rose-400";
+                } else if (index === activeWordIndex) {
+                  const currentTyped = typedWordsArray[index] || "";
+                  return (
+                    <span key={index} className="active-word text-blue-600 underline decoration-blue-300 decoration-4 underline-offset-8 font-bold">
+                      {word.split('').map((char, charIdx) => {
+                        let charClass = "";
+                        if (charIdx < currentTyped.length) {
+                          charClass = normalizeChar(char) === normalizeChar(currentTyped[charIdx]) ? "text-emerald-600" : "text-rose-600 bg-rose-50";
+                        }
+                        return <span key={charIdx} className={charClass}>{char}</span>;
+                      })}
+                      {" "}
+                    </span>
+                  );
+                }
               }
               else if (settings.highlightMode === 'letter') {
-                  if (index < activeWordIndex) {
-                    className += "opacity-40 ";
-                  } else if (index === activeWordIndex) {
-                    const currentTyped = typedWordsArray[index] || "";
-                    return (
-                        <span key={index} className="active-word font-bold">
-                            {word.split('').map((char, charIdx) => {
-                                let charClass = "text-gray-400";
-                                if (charIdx < currentTyped.length) {
-                                    charClass = normalizeChar(char) === normalizeChar(currentTyped[charIdx]) ? "text-emerald-600" : "text-rose-600 underline";
-                                } else if (charIdx === currentTyped.length) {
-                                    charClass = "text-white bg-blue-600 rounded-sm ring-2 ring-blue-300";
-                                }
-                                return <span key={charIdx} className={charClass}>{char}</span>;
-                            })}
-                            {" "}
-                        </span>
-                    );
-                  }
+                if (index < activeWordIndex) {
+                  className += "opacity-40 ";
+                } else if (index === activeWordIndex) {
+                  const currentTyped = typedWordsArray[index] || "";
+                  return (
+                    <span key={index} className="active-word font-bold">
+                      {word.split('').map((char, charIdx) => {
+                        let charClass = "text-gray-400";
+                        if (charIdx < currentTyped.length) {
+                          charClass = normalizeChar(char) === normalizeChar(currentTyped[charIdx]) ? "text-emerald-600" : "text-rose-600 underline";
+                        } else if (charIdx === currentTyped.length) {
+                          charClass = "text-white bg-blue-600 rounded-sm ring-2 ring-blue-300";
+                        }
+                        return <span key={charIdx} className={charClass}>{char}</span>;
+                      })}
+                      {" "}
+                    </span>
+                  );
+                }
               }
 
               return (
@@ -588,43 +585,43 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
 
         {/* Data Input Stream */}
         <textarea
-            ref={inputRef}
-            value={typedText}
-            onChange={handleTextChange}
-            onKeyDown={handleKeyDown}
-            onPaste={(e) => config.disableCopyPaste !== false && e.preventDefault()}
-            disabled={isFinished}
-            spellCheck={false}
-            autoComplete="off"
-            className="flex-1 border-4 border-slate-200 rounded-[3rem] p-10 overflow-y-auto outline-none focus:border-primary/40 text-slate-900 font-bold leading-[1.8] resize-none shadow-2xl transition-all duration-500"
-            style={{ 
-              fontSize: `${fontSize + 2}px`, 
-              fontFamily: typingFont,
-              minHeight: '220px', 
-              backgroundColor: bgColor,
-              scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
-            }}
+          ref={inputRef}
+          value={typedText}
+          onChange={handleTextChange}
+          onKeyDown={handleKeyDown}
+          onPaste={(e) => config.disableCopyPaste !== false && e.preventDefault()}
+          disabled={isFinished}
+          spellCheck={false}
+          autoComplete="off"
+          className="flex-1 border-4 border-slate-200 rounded-[3rem] p-10 overflow-y-auto outline-none focus:border-primary/40 text-slate-900 font-bold leading-[1.8] resize-none shadow-2xl transition-all duration-500"
+          style={{
+            fontSize: `${fontSize + 2}px`,
+            fontFamily: typingFont,
+            minHeight: '220px',
+            backgroundColor: bgColor,
+            scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
+          }}
         />
       </div>
 
       {/* Footer Authorization Area */}
       <div className="bg-white p-6 border-t border-slate-200 flex justify-center items-center relative h-24">
         <div className="flex items-center gap-6 max-w-7xl mx-auto w-full justify-center relative">
-          <button 
+          <button
             onClick={() => router.back()}
             className="absolute left-0 px-8 py-4 rounded-2xl text-slate-500 font-black uppercase tracking-widest hover:bg-slate-100 transition-all"
           >
             Terminal Exit
           </button>
-          
-          <button 
+
+          <button
             onClick={() => endTest()}
             className="bg-primary text-white px-16 py-5 rounded-[2rem] font-black uppercase tracking-[0.3em] hover:bg-primary-dark hover:shadow-2xl hover:shadow-primary/40 transition-all hover:-translate-y-1 active:translate-y-0"
           >
             Authorize Submission
           </button>
-          
-          <button 
+
+          <button
             onClick={() => {
               if (confirm("Are you sure you want to reset the test? Current progress will be lost.")) {
                 resetTest();

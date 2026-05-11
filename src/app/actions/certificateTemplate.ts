@@ -84,7 +84,7 @@ export async function setDefaultTemplate(id: string) {
         await CertificateTemplate.updateMany({}, { $set: { isDefault: false } });
         // Set this one
         await CertificateTemplate.findByIdAndUpdate(id, { $set: { isDefault: true } });
-        
+
         revalidatePath("/admin/certificates/templates");
         return { success: true };
     } catch (error: any) {
@@ -118,7 +118,7 @@ export async function getTemplatePreviewPDF(templateId: string) {
             }
         }
         */
-        
+
         const previewQrCodeUrl = await QRCode.toDataURL("https://ngit-new.vercel.app/verify/SAMPLE");
 
         const heads = await headers();
@@ -149,8 +149,8 @@ export async function getTemplatePreviewPDF(templateId: string) {
             }) as any
         );
 
-        return { 
-            success: true, 
+        return {
+            success: true,
             pdfBase64: pdfBuffer.toString('base64'),
             filename: `Preview-${template.name.replace(/\s+/g, '-')}.pdf`
         };

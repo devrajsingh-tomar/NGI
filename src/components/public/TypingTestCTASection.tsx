@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Keyboard, ArrowRight, Zap, Trophy, Timer } from "lucide-react";
 import { motion } from "framer-motion";
+import { isTypingModuleEnabled } from "@/lib/feature-flags";
 
 export default function TypingTestCTASection({ data }: { data?: any }) {
+    if (!isTypingModuleEnabled()) return null;
+    
     return (
         <div className="container mx-auto px-4 lg:px-10 py-16">
             <div className="bg-slate-900 rounded-[3rem] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-2xl border border-slate-800">

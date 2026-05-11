@@ -84,19 +84,19 @@ export async function getCertificatePDF(certId: string) {
 
         // 1. Determine which template to use (Try specific, then default, then any)
         let template: any = null;
-        
+
         // A. Try specific template from metadata
         if (cert.metadata?.templateId) {
             template = await CertificateTemplate.findById(cert.metadata.templateId);
             console.log("DEBUG: Specific template lookup:", template ? template.name : "FAILED/MISSING");
         }
-        
+
         // B. If no specific found, try Default
         if (!template) {
             template = await CertificateTemplate.findOne({ isDefault: true });
             console.log("DEBUG: Default template lookup:", template ? template.name : "NOT SET");
         }
-        
+
         // C. Last Resort: Pick any existing template
         if (!template) {
             template = await CertificateTemplate.findOne().sort({ updatedAt: -1 });
@@ -106,7 +106,7 @@ export async function getCertificatePDF(certId: string) {
         if (template) {
             const templateIdToUse = template._id.toString();
             console.log("DEBUG: Proceeding with template:", template.name, `(${templateIdToUse})`);
-            
+
             // LOG ELEMENTS to find corrupt sources
             console.log("DEBUG: TEMPLATE ELEMENTS RAW:", JSON.stringify(template.elements, null, 2));
 
@@ -137,29 +137,29 @@ export async function getCertificatePDF(certId: string) {
 
             try {
                 pdfBuffer = await renderToBuffer(
-                        React.createElement(DynamicCertificateTemplate as any, {
-                            elements: template.elements as any,
-                            backgroundImage: template.backgroundImage,
-                            config: template.config as any,
-                            origin: origin,
-                            placeholders: {
-                                student_name: student.name || "Student Name",
-                                course_name: course.title || "Course Name",
-                                grade: cert.grade || "N/A",
-                                percentage: (cert.percentage || 0).toString(),
-                                enrollment_number: student.email || student._id.toString(),
-                                certificate_number: cert.certificateNumber,
-                                issue_date: dateStr,
-                                qr_code: qrCodeDataUrl,
-                                institute_name: "NGI Study Zone Institute"
-                            }
-                        }) as any
-                    );
+                    React.createElement(DynamicCertificateTemplate as any, {
+                        elements: template.elements as any,
+                        backgroundImage: template.backgroundImage,
+                        config: template.config as any,
+                        origin: origin,
+                        placeholders: {
+                            student_name: student.name || "Student Name",
+                            course_name: course.title || "Course Name",
+                            grade: cert.grade || "N/A",
+                            percentage: (cert.percentage || 0).toString(),
+                            enrollment_number: student.email || student._id.toString(),
+                            certificate_number: cert.certificateNumber,
+                            issue_date: dateStr,
+                            qr_code: qrCodeDataUrl,
+                            institute_name: "NGI Study Zone Institute"
+                        }
+                    }) as any
+                );
             } catch (err: any) {
                 console.error("Dynamic Template Render Error:", err);
-                return { 
-                    success: false, 
-                    error: `Render Error: ${err.message || 'Unknown error'}. Please check template elements.` 
+                return {
+                    success: false,
+                    error: `Render Error: ${err.message || 'Unknown error'}. Please check template elements.`
                 };
             }
         }
@@ -167,17 +167,17 @@ export async function getCertificatePDF(certId: string) {
         console.log("DEBUG: pdfBuffer generated:", pdfBuffer ? pdfBuffer.length : "null");
 
         if (!pdfBuffer) {
-            return { 
-                success: false, 
-                error: `Render Error: The system found a template but failed to generate the PDF.` 
+            return {
+                success: false,
+                error: `Render Error: The system found a template but failed to generate the PDF.`
             };
         }
 
         const base64 = pdfBuffer.toString('base64');
-        return { 
-            success: true, 
-            pdfBase64: base64, 
-            filename: `Certificate-${cert.certificateNumber.replace(/\//g, '-')}.pdf` 
+        return {
+            success: true,
+            pdfBase64: base64,
+            filename: `Certificate-${cert.certificateNumber.replace(/\//g, '-')}.pdf`
         };
 
     } catch (error: any) {

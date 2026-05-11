@@ -20,12 +20,12 @@ const nextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "ngitedu.com",
+                hostname: "ngistudyzone.com",
                 pathname: "/**",
             },
             {
                 protocol: "https",
-                hostname: "www.ngitedu.com",
+                hostname: "www.ngistudyzone.com",
                 pathname: "/**",
             },
             {
