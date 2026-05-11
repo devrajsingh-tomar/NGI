@@ -359,6 +359,15 @@ export function SortableBlockItem({ block, index, onUpdate, onSave, onDelete, se
                                                 onChange={(e) => updateExtra("address", e.target.value)} 
                                             />
                                         </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Google Map URL (Share Link or Embed)</label>
+                                            <Input 
+                                                placeholder="e.g. https://maps.app.goo.gl/..."
+                                                className="h-10 rounded-xl bg-slate-50 border-none font-bold text-sm text-slate-900 focus-visible:ring-1 focus-visible:ring-blue-500" 
+                                                value={extraData.map_url || ""} 
+                                                onChange={(e) => updateExtra("map_url", e.target.value)} 
+                                            />
+                                        </div>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">

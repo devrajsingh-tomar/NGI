@@ -197,6 +197,74 @@ export default function ContactSection({ data, blocks }: { data?: any, blocks?: 
                         </form>
                     </div>
                 </div>
+
+                {/* Dynamic Google Map Section */}
+                <div className="mt-20 bg-white p-4 md:p-6 rounded-[3rem] shadow-xl border border-slate-100 relative overflow-hidden group">
+                    <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden">
+                        {(() => {
+                            let cleanUrl = extra?.map_url || "";
+                            if (cleanUrl.includes("<iframe") && cleanUrl.includes("src=")) {
+                                const match = cleanUrl.match(/src="([^"]+)"/);
+                                if (match && match[1]) cleanUrl = match[1];
+                            }
+                            
+                            // Check if it's a valid embed URL. If it's a normal maps.google.com link WITHOUT /embed, 
+                            // it will be blocked by X-Frame-Options.
+                            const isEmbeddable = cleanUrl && !cleanUrl.includes('goo.gl') && (cleanUrl.includes('/embed') || !cleanUrl.includes('google.com/maps/'));
+                            
+                            if (isEmbeddable) {
+                                return (
+                                    <iframe
+                                        src={cleanUrl}
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen={true}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700"
+                                    ></iframe>
+                                );
+                            }
+                            return (
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.5762928460044!2d81.87340689999999!3d25.48582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399ab531fe1e89e1%3A0xc96ab59adb557ac0!2sNational%20Genius%20Institute!5e0!3m2!1sen!2sin!4v1778533252331!5m2!1sen!2sin"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen={true}
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700"
+                                ></iframe>
+                            );
+                        })()}
+                    </div>
+                    {(() => {
+                        let cleanUrl = extra?.map_url || "";
+                        if (cleanUrl.includes("<iframe") && cleanUrl.includes("src=")) {
+                            const match = cleanUrl.match(/src="([^"]+)"/);
+                            if (match && match[1]) cleanUrl = match[1];
+                        }
+                        const isShareLink = cleanUrl && (cleanUrl.includes('goo.gl') || (cleanUrl.includes('google.com/maps') && !cleanUrl.includes('/embed')));
+                        
+                        if (isShareLink) {
+                            return (
+                                <div className="absolute top-8 right-8 z-20">
+                                    <a 
+                                        href={cleanUrl} 
+                                        target="_blank" 
+                                        rel="noreferrer"
+                                        className="px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-full shadow-lg hover:scale-105 transition-transform flex items-center gap-2"
+                                    >
+                                        <MapPin className="w-4 h-4" /> Open in Maps App
+                                    </a>
+                                </div>
+                            );
+                        }
+                        return null;
+                    })()}
+                </div>
             </div>
         </section>
     );

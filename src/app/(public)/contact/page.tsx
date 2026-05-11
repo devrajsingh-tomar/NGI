@@ -38,8 +38,8 @@ const staticFallbackContent = (
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Tele-Navigation</p>
                                     <div className="flex flex-col">
+                                        <a href="tel:+919369980633" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 9369980633</a>
                                         <a href="tel:+919919303047" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 9919303047</a>
-                                        <a href="tel:+919919303032" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 9919303032</a>
                                     </div>
                                 </div>
                             </div>
@@ -50,19 +50,22 @@ const staticFallbackContent = (
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Digital Logistics</p>
-                                    <a href="mailto:ngistudyzone@gmail.com" className="text-2xl font-black text-slate-900 hover:text-indigo-600 transition-colors tracking-tight">ngistudyzone@gmail.com</a>
+                                    <div className="flex flex-col gap-1">
+                                        <a href="mailto:Olpsacadmy035@gmail.com" className="text-lg md:text-xl font-black text-slate-900 hover:text-indigo-600 transition-colors tracking-tight break-all">Olpsacadmy035@gmail.com</a>
+                                        <a href="mailto:Contact@nationalgeniusinstitute.com" className="text-lg md:text-xl font-black text-slate-900 hover:text-indigo-600 transition-colors tracking-tight break-all">Contact@nationalgeniusinstitute.com</a>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="flex items-start gap-8 group/item">
-                                <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-3xl flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all duration-500 shadow-sm">
+                                <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-3xl flex items-center justify-center group-hover/item:bg-emerald-500 group-hover/item:text-white transition-all duration-500 shadow-sm shrink-0">
                                     <MapPin className="w-7 h-7" />
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Spatial Identity</p>
-                                    <p className="text-2xl font-black text-slate-900 leading-tight tracking-tight">
-                                        Stanley Road, Beli<br />
-                                        Prayagraj, UP 211002
+                                    <p className="text-lg md:text-xl font-black text-slate-900 leading-tight tracking-tight">
+                                        NGI COMPUTER INSTITUTE SALORI PRAYAGRAJ,<br />
+                                        Chandpur Salori (Near Bahadur Chai) Prayagraj
                                     </p>
                                 </div>
                             </div>
@@ -108,9 +111,35 @@ const staticFallbackContent = (
                         </p>
                         <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100 text-center">
                             <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Primary Access Protocol</p>
-                            <p className="text-2xl font-black text-slate-900 tracking-tight italic">+91 98394 46340</p>
+                            <p className="text-2xl font-black text-slate-900 tracking-tight italic">+91 9369980633</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Google Map Section */}
+            <div className="max-w-7xl mx-auto mt-20 bg-white p-4 md:p-6 rounded-[3rem] shadow-xl border border-slate-100 relative overflow-hidden group">
+                <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.5762928460044!2d81.87340689999999!3d25.48582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399ab531fe1e89e1%3A0xc96ab59adb557ac0!2sNational%20Genius%20Institute!5e0!3m2!1sen!2sin!4v1778533252331!5m2!1sen!2sin"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen={true}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700"
+                    ></iframe>
+                </div>
+                <div className="absolute top-10 right-10 z-20">
+                    <a 
+                        href="https://maps.app.goo.gl/7jKkiSHF6Htnff4r5" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="px-6 py-3 bg-primary text-white text-[10px] md:text-xs font-black uppercase tracking-widest rounded-full shadow-2xl hover:scale-105 transition-transform flex items-center gap-2 border border-white/20"
+                    >
+                        <MapPin className="w-4 h-4" /> Open in Maps App
+                    </a>
                 </div>
             </div>
         </div>
