@@ -233,16 +233,44 @@ export default function NewMockTestPage() {
                                         {paperSets.map(p => <option key={p._id} value={p._id}>{p.name} ({p.questions?.length} Qs)</option>)}
                                     </select>
                                 </div>
-                                <div className="space-y-4 lg:col-span-2 p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
-                                    <div>
-                                        <p className="font-black text-slate-900 uppercase tracking-widest text-xs">Public Mock Test</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">Make this test visible to all students on the homepage</p>
+                                <div className="space-y-4 lg:col-span-2 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="font-black text-slate-900 uppercase tracking-widest text-xs">Mock Test Portal</p>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">Show in general mock test section</p>
+                                        </div>
+                                        <Switch 
+                                            checked={formData.isMockTest} 
+                                            onCheckedChange={(val) => setFormData({...formData, isMockTest: val})} 
+                                            className="data-[state=checked]:bg-primary"
+                                        />
                                     </div>
-                                    <Switch 
-                                        checked={formData.isMockTest} 
-                                        onCheckedChange={(val) => setFormData({...formData, isMockTest: val})} 
-                                        className="data-[state=checked]:bg-primary"
-                                    />
+                                    
+                                    <div className="pt-4 border-t border-slate-200">
+                                        <Label className="font-black text-slate-900 uppercase tracking-widest text-[10px]">Access Visibility</Label>
+                                        <div className="grid grid-cols-3 gap-2 mt-2">
+                                            {["PUBLIC", "PRIVATE", "COURSE_ONLY"].map((v) => (
+                                                <button
+                                                    key={v}
+                                                    type="button"
+                                                    onClick={() => setFormData({...formData, visibility: v})}
+                                                    className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase transition-all border-2 ${
+                                                        formData.visibility === v
+                                                            ? "bg-primary border-primary text-white shadow-md"
+                                                            : "bg-white border-slate-100 text-slate-400 hover:border-slate-200"
+                                                    }`}
+                                                >
+                                                    {v.replace("_", " ")}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <p className="text-[9px] text-slate-400 font-bold mt-2 uppercase tracking-tight leading-tight">
+                                            {formData.visibility === "PUBLIC" && "✅ Visible to all students in the portal."}
+                                            {formData.visibility === "PRIVATE" && "🔒 Hidden from portal. Can be assigned to courses."}
+                                            {formData.visibility === "COURSE_ONLY" && "📚 Course access only. Hidden from Mock Test lists."}
+                                            {(!formData.visibility || formData.visibility === "PUBLIC") && !["PRIVATE", "COURSE_ONLY"].includes(formData.visibility) && "✅ Visible to all students in the portal."}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

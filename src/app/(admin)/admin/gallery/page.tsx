@@ -22,7 +22,8 @@ export default function AdminGalleryPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("Campus");
+    const [category, setCategory] = useState("General");
+    const [isPublic, setIsPublic] = useState(true);
     const [images, setImages] = useState<any[]>([]);
 
     useEffect(() => {
@@ -31,8 +32,9 @@ export default function AdminGalleryPage() {
                 setImages(res.images.map((img: any) => ({
                     id: img._id,
                     title: img.title || "Untitled",
-                    category: img.category || "Others",
-                    url: img.url
+                    category: img.category || "General",
+                    url: img.url,
+                    isPublic: img.isPublic !== false
                 })));
             }
         });
@@ -77,7 +79,8 @@ export default function AdminGalleryPage() {
             const res = await (await import("@/app/actions/upload")).saveExternalImageUrlAction({
                 url: externalUrl,
                 title,
-                category
+                category,
+                isPublic
             });
 
             if (res.success) {
@@ -85,7 +88,8 @@ export default function AdminGalleryPage() {
                     id: res.media._id,
                     title,
                     category,
-                    url: externalUrl
+                    url: externalUrl,
+                    isPublic
                 }, ...images]);
                 toast.success("External memory saved!");
                 resetUpload();
@@ -101,6 +105,7 @@ export default function AdminGalleryPage() {
             formData.append("file", selectedFile);
             formData.append("title", title);
             formData.append("category", category);
+            formData.append("isPublic", isPublic.toString());
 
             const res = await uploadImageAction(formData);
 
@@ -109,7 +114,8 @@ export default function AdminGalleryPage() {
                     id: res.media._id,
                     title,
                     category,
-                    url: res.url
+                    url: res.url,
+                    isPublic
                 }, ...images]);
                 toast.success("Photo uploaded!");
                 resetUpload();
@@ -126,6 +132,8 @@ export default function AdminGalleryPage() {
         setPreviewUrl(null);
         setExternalUrl("");
         setTitle("");
+        setIsPublic(true);
+        setCategory("General");
     };
 
     return (
@@ -176,18 +184,34 @@ export default function AdminGalleryPage() {
                                     onChange={(e) => setTitle(e.target.value)}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Group</label>
-                                <select
-                                    className="flex h-14 w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-2 font-black text-sm uppercase tracking-widest focus:border-primary/50 outline-none transition-all"
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
-                                >
-                                    <option>Campus</option>
-                                    <option>Events</option>
-                                    <option>Students</option>
-                                    <option>Faculty</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Group</label>
+                                    <select
+                                        className="flex h-14 w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-2 font-black text-sm uppercase tracking-widest focus:border-primary/50 outline-none transition-all"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                    >
+                                        <option value="General">General (Not in Gallery)</option>
+                                        <option>Campus</option>
+                                        <option>Events</option>
+                                        <option>Students</option>
+                                        <option>Faculty</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Visibility</label>
+                                    <div 
+                                        onClick={() => setIsPublic(!isPublic)}
+                                        className={cn(
+                                            "flex h-14 w-full rounded-2xl border-2 px-4 py-2 font-black text-sm uppercase tracking-widest items-center justify-between cursor-pointer transition-all",
+                                            isPublic ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-500"
+                                        )}
+                                    >
+                                        <span>{isPublic ? "Public Gallery" : "Hidden / Link Only"}</span>
+                                        <div className={cn("w-2 h-2 rounded-full", isPublic ? "bg-emerald-500 animate-pulse" : "bg-slate-300")} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -265,10 +289,18 @@ export default function AdminGalleryPage() {
                                     <Trash2 className="w-5 h-5" />
                                 </Button>
                             </div>
-                            <div className="absolute top-3 left-3">
-                                <span className="bg-white/90 backdrop-blur-sm text-[10px] font-black px-3 py-1 rounded-full uppercase text-slate-900 border border-white">
+                            <div className="absolute top-3 left-3 flex gap-1">
+                                <span className={cn(
+                                    "backdrop-blur-sm text-[10px] font-black px-3 py-1 rounded-full uppercase border shadow-sm",
+                                    img.category === "General" ? "bg-slate-100 text-slate-500 border-slate-200" : "bg-white/90 text-slate-900 border-white"
+                                )}>
                                     {img.category}
                                 </span>
+                                {!img.isPublic && (
+                                    <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-1 rounded-full uppercase shadow-lg">
+                                        Hidden
+                                    </span>
+                                )}
                             </div>
                         </div>
                         <div className="p-4">

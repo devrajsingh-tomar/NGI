@@ -36,6 +36,7 @@ export async function uploadImageAction(formData: FormData) {
             size: file.size,
             title: (formData.get("title") as string) || "",
             category: (formData.get("category") as string) || "Others",
+            isPublic: formData.get("isPublic") === "true",
             uploadedBy: session.user.id
         });
 
@@ -55,10 +56,11 @@ export async function uploadImageAction(formData: FormData) {
     }
 }
 
-export async function getGalleryImages() {
+export async function getGalleryImages(isOnlyPublic = false) {
     try {
         await connectDB();
-        const images = await Media.find().sort({ createdAt: -1 }).lean();
+        const query = isOnlyPublic ? { isPublic: true } : {};
+        const images = await Media.find(query).sort({ createdAt: -1 }).lean();
         return { success: true, images: JSON.parse(JSON.stringify(images)) };
     } catch (error) {
         console.error("Fetch Gallery Error:", error);
@@ -82,7 +84,7 @@ export async function deleteImageAction(id: string) {
     }
 }
 
-export async function saveExternalImageUrlAction({ url, title, category }: { url: string, title: string, category: string }) {
+export async function saveExternalImageUrlAction({ url, title, category, isPublic }: { url: string, title: string, category: string, isPublic?: boolean }) {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user) return { success: false, error: "Unauthorized" };
@@ -94,6 +96,7 @@ export async function saveExternalImageUrlAction({ url, title, category }: { url
             url,
             title,
             category: category || "Others",
+            isPublic: isPublic !== false,
             uploadedBy: session.user.id,
             mimeType: "image/external",
             size: 0

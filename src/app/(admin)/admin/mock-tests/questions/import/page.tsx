@@ -288,7 +288,17 @@ export default function ImportQuestionsPage() {
             Marks: 1, NegMarks: 0.25, Subject: "Computer", Topic: "Hardware", Difficulty: "EASY"
         });
 
-        // 2. True/False
+        // 2. MCQ Multiple
+        worksheet.addRow({
+            Question: "Which of these are programming languages? (Select all that apply)",
+            Type: "MCQ_MULTIPLE",
+            OptionA: "Python", OptionB: "HTML", OptionC: "Java", OptionD: "CSS",
+            CorrectAnswer: "A, C",
+            Explanation: "Python and Java are programming languages, while HTML and CSS are markup/styling languages.",
+            Marks: 2, NegMarks: 0.5, Subject: "IT", Topic: "Programming", Difficulty: "MEDIUM"
+        });
+
+        // 3. True/False
         worksheet.addRow({
             Question: "RAM is a volatile memory.",
             Type: "TRUE_FALSE",
@@ -297,7 +307,7 @@ export default function ImportQuestionsPage() {
             Marks: 1, NegMarks: 0.25, Subject: "Computer", Topic: "Memory", Difficulty: "EASY"
         });
 
-        // 3. Assertion/Reason
+        // 4. Assertion/Reason
         worksheet.addRow({
             Question: "Analyze the Assertion and Reason below:",
             Type: "ASSERTION_REASON",
@@ -308,7 +318,7 @@ export default function ImportQuestionsPage() {
             Marks: 1, NegMarks: 0.25, Subject: "IT", Topic: "Cloud", Difficulty: "MEDIUM"
         });
 
-        // 4. Match the Following
+        // 5. Match the Following
         worksheet.addRow({
             Question: "Match the following Operating Systems with their Developers:",
             Type: "MATCH_THE_FOLLOWING",
@@ -319,7 +329,25 @@ export default function ImportQuestionsPage() {
             Marks: 4, NegMarks: 1, Subject: "IT", Topic: "OS", Difficulty: "MEDIUM"
         });
 
-        // 5. Typing Test
+        // 6. Numeric
+        worksheet.addRow({
+            Question: "What is the result of 2 + 2?",
+            Type: "NUMERIC",
+            NumericAnswer: 4,
+            Explanation: "Basic arithmetic.",
+            Marks: 1, NegMarks: 0, Subject: "Math", Topic: "Basic", Difficulty: "EASY"
+        });
+
+        // 7. Short Answer
+        worksheet.addRow({
+            Question: "Explain the concept of 'Inheritance' in OOP in one sentence.",
+            Type: "SHORT_ANSWER",
+            CorrectAnswer: "Mechanism where one class acquires properties of another.",
+            Explanation: "Focus on reusability.",
+            Marks: 2, NegMarks: 0, Subject: "OOP", Topic: "Basic", Difficulty: "MEDIUM"
+        });
+
+        // 8. Typing Test
         worksheet.addRow({
             Question: "Type the following passage exactly as shown.",
             Type: "TYPING",

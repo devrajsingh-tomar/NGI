@@ -204,10 +204,14 @@ export async function getQuizzesForCourse(courseId: string) {
         const session = await getServerSession(authOptions);
         if (session?.user?.role !== "ADMIN") return { success: false, error: "Unauthorized" };
 
+        // Fetch quizzes linked to this course OR quizzes marked as mock tests with non-public visibility
         const quizzes = await Quiz.find({ 
-            courseId
+            $or: [
+                { courseId },
+                { isMockTest: true, visibility: { $in: ["PRIVATE", "COURSE_ONLY"] } }
+            ]
         })
-            .select("_id title settings isPublished")
+            .select("_id title settings isPublished visibility isMockTest")
             .sort({ createdAt: -1 })
             .lean();
 
@@ -217,7 +221,9 @@ export async function getQuizzesForCourse(courseId: string) {
             timeLimit: q.settings?.timeLimit || 30,
             totalMarks: q.settings?.totalMarks || 10,
             passingMarks: q.settings?.passingMarks || 4,
-            isPublished: q.isPublished
+            isPublished: q.isPublished,
+            visibility: q.visibility || "PUBLIC",
+            isMockTest: q.isMockTest
         }));
 
         return { success: true, quizzes: JSON.parse(JSON.stringify(flatQuizzes)) };

@@ -20,6 +20,7 @@ interface Lesson {
     description?: string;
     type: "VIDEO" | "PDF" | "QUIZ" | "YOUTUBE_LIVE" | "YOUTUBE_RECORDED";
     contentUrl?: string;
+    quizId?: string;
     duration?: number;
     order: number;
     attachments?: { title: string; url: string; size?: string }[];
@@ -293,7 +294,7 @@ export default function LessonPage({
                                 Take this quiz to test your understanding of the material.
                             </p>
                         </div>
-                        <Link href={`/student/quizzes`}>
+                        <Link href={`/student/quizzes/${lesson.quizId}`}>
                             <Button size="lg" className="rounded-2xl font-bold gap-2 h-12 px-8 bg-indigo-600 hover:bg-indigo-700">
                                 <Brain className="w-4 h-4" /> Start Quiz
                             </Button>

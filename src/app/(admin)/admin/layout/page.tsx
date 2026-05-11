@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getHeaderFooterData, updateHeaderData, updateFooterData } from "@/app/actions/layoutContent";
 import { toast } from "sonner";
-import { Save, Plus, Trash2, Layout, Menu, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { Save, Plus, Trash2, Layout, Menu, Link as LinkIcon, Image as ImageIcon, Phone, Mail, MapPin } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 
 export default function LayoutManagementPage() {
@@ -25,6 +25,7 @@ export default function LayoutManagementPage() {
     const [footerSections, setFooterSections] = useState<{ title: string; links: { label: string; href: string }[] }[]>([]);
     const [footerSocial, setFooterSocial] = useState<{ platform: string; url: string }[]>([]);
     const [footerCopyright, setFooterCopyright] = useState("");
+    const [footerMapEmbed, setFooterMapEmbed] = useState("");
 
     const availableLinks = [
         { label: "Home", href: "/" },
@@ -61,6 +62,7 @@ export default function LayoutManagementPage() {
             setFooterSections(result.footer.sections || []);
             setFooterSocial(result.footer.social || []);
             setFooterCopyright(result.footer.copyright || "");
+            setFooterMapEmbed(result.footer.mapEmbed || "");
         } else {
             toast.error("Failed to load data");
         }
@@ -93,6 +95,7 @@ export default function LayoutManagementPage() {
             sections: footerSections,
             social: footerSocial,
             copyright: footerCopyright,
+            mapEmbed: footerMapEmbed,
         });
 
         if (result.success) {
@@ -518,6 +521,117 @@ export default function LayoutManagementPage() {
                             </div>
                         </div>
 
+                        {/* Support / Contact Information Section */}
+                        <div className="bg-indigo-50/50 border border-indigo-100 p-6 rounded-[2rem] space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-200">
+                                        <Phone className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Support & Contact Details</h3>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Manage phone, email and address</p>
+                                    </div>
+                                </div>
+                                <span className="text-[9px] font-black bg-indigo-500 text-white px-3 py-1 rounded-full uppercase tracking-widest">Global Footer Module</span>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                        <Phone className="w-3 h-3" /> Phone Numbers (Comma separated)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. +91 9369980633, +91 9919303047"
+                                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm bg-white"
+                                        value={footerSections.find(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'))?.links.filter(l => l.href.startsWith('tel:')).map(l => l.label.replace('Phone: ', '')).join(', ') || ""}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            const numbers = val.split(',').map(n => n.trim()).filter(Boolean);
+                                            const updated = [...footerSections];
+                                            let supportIdx = updated.findIndex(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'));
+                                            if (supportIdx === -1) {
+                                                updated.push({ title: "SUPPORT", links: [] });
+                                                supportIdx = updated.length - 1;
+                                            }
+                                            // Filter out old tel links and add new ones
+                                            const otherLinks = updated[supportIdx].links.filter(l => !l.href.startsWith('tel:'));
+                                            const newTelLinks = numbers.map(n => ({ label: `Phone: ${n}`, href: `tel:${n.replace(/\s+/g, '')}` }));
+                                            updated[supportIdx].links = [...newTelLinks, ...otherLinks];
+                                            setFooterSections(updated);
+                                        }}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                        <Mail className="w-3 h-3" /> Email Addresses (Comma separated)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. contact@nationalgeniusinstitute.com, Olpsacadmy035@gmail.com"
+                                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm bg-white"
+                                        value={footerSections.find(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'))?.links.filter(l => l.href.startsWith('mailto:')).map(l => l.label.replace('Email: ', '')).join(', ') || ""}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            const emails = val.split(',').map(n => n.trim()).filter(Boolean);
+                                            const updated = [...footerSections];
+                                            let supportIdx = updated.findIndex(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'));
+                                            if (supportIdx === -1) {
+                                                updated.push({ title: "SUPPORT", links: [] });
+                                                supportIdx = updated.length - 1;
+                                            }
+                                            // Filter out old mailto links and add new ones
+                                            const otherLinks = updated[supportIdx].links.filter(l => !l.href.startsWith('mailto:'));
+                                            const newMailLinks = emails.map(m => ({ label: `Email: ${m}`, href: `mailto:${m}` }));
+                                            updated[supportIdx].links = [...newMailLinks, ...otherLinks];
+                                            setFooterSections(updated);
+                                        }}
+                                    />
+                                </div>
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                        <MapPin className="w-3 h-3" /> Institute Location / Address
+                                    </label>
+                                    <textarea
+                                        placeholder="e.g. NGI COMPUTER INSTITUTE SALORI PRAYAGRAJ"
+                                        rows={2}
+                                        className="w-full p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm bg-white resize-none"
+                                        value={footerSections.find(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'))?.links.find(l => !l.href.startsWith('tel:') && !l.href.startsWith('mailto:'))?.label || ""}
+                                        onChange={(e) => {
+                                            const updated = [...footerSections];
+                                            let supportIdx = updated.findIndex(s => s.title.toLowerCase().includes('support') || s.title.toLowerCase().includes('contact'));
+                                            if (supportIdx === -1) {
+                                                updated.push({ title: "SUPPORT", links: [] });
+                                                supportIdx = updated.length - 1;
+                                            }
+                                            let linkIdx = updated[supportIdx].links.findIndex(l => !l.href.startsWith('tel:') && !l.href.startsWith('mailto:'));
+                                            if (linkIdx === -1) {
+                                                updated[supportIdx].links.push({ label: e.target.value, href: "/contact" });
+                                            } else {
+                                                updated[supportIdx].links[linkIdx] = { label: e.target.value, href: "/contact" };
+                                            }
+                                            setFooterSections(updated);
+                                        }}
+                                    />
+                                </div>
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                        <MapPin className="w-3 h-3" /> Google Maps Embed URL (src attribute only)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Paste the 'src' from the iframe embed code here..."
+                                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm bg-white"
+                                        value={footerMapEmbed || ""}
+                                        onChange={(e) => setFooterMapEmbed(e.target.value)}
+                                    />
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight ml-1">Example: https://www.google.com/maps/embed?pb=...</p>
+                                </div>
+                            </div>
+                            <p className="text-[9px] text-slate-400 font-bold italic text-center">Note: Multiple numbers/emails will be synced as individual clickable links in the footer.</p>
+                        </div>
+
                         {/* Copyright */}
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2">Copyright Text</label>
@@ -530,9 +644,9 @@ export default function LayoutManagementPage() {
                             />
                         </div>
 
-                        <Button onClick={handleSaveFooter} disabled={saving} className="w-full h-12 font-bold">
+                        <Button onClick={handleSaveFooter} disabled={saving} className="w-full h-12 font-bold shadow-xl shadow-primary/20">
                             <Save className="w-4 h-4 mr-2" />
-                            {saving ? "Saving..." : "Save Footer"}
+                            {saving ? "Deploying Updates..." : "Sync Footer Changes"}
                         </Button>
                     </div>
                 )}

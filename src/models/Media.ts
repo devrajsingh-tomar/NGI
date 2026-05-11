@@ -8,6 +8,7 @@ export interface IMedia extends Document {
     size: number;
     title?: string;
     category?: string;
+    isPublic: boolean;
     uploadedBy: mongoose.Types.ObjectId;
     createdAt: Date;
 }
@@ -19,6 +20,7 @@ const MediaSchema: Schema = new Schema({
     size: { type: Number, required: true },
     title: { type: String },
     category: { type: String, default: "Others" },
+    isPublic: { type: Boolean, default: true },
     uploadedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
 }, { timestamps: true });
 

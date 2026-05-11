@@ -27,7 +27,7 @@ const staticFallbackContent = (
 export default async function PublicGalleryPage() {
     const [dynamicData, galleryRes] = await Promise.all([
         getDynamicPageData("gallery"),
-        getGalleryImages()
+        getGalleryImages(true)
     ]);
     
     const cmsSections = dynamicData.success && dynamicData.sections ? dynamicData.sections : [];

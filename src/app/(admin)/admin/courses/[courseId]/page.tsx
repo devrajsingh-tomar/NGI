@@ -734,6 +734,9 @@ export default function CourseContentPage() {
                                                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{quiz.timeLimit} min</span>
                                                             <span>{quiz.totalMarks} marks</span>
                                                             <span>Pass: {quiz.passingMarks}</span>
+                                                            {quiz.isMockTest && <span className="text-purple-600 bg-purple-50 px-1.5 rounded flex items-center gap-1"><Brain className="w-2.5 h-2.5" /> Mock Test</span>}
+                                                            {quiz.visibility === "PRIVATE" && <span className="text-amber-600 bg-amber-50 px-1.5 rounded flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Private</span>}
+                                                            {quiz.visibility === "COURSE_ONLY" && <span className="text-indigo-600 bg-indigo-50 px-1.5 rounded flex items-center gap-1"><BookOpen className="w-2.5 h-2.5" /> Course Only</span>}
                                                             {quiz.isPublished
                                                                 ? <span className="text-emerald-600 bg-emerald-50 px-1.5 rounded">Published</span>
                                                                 : <span className="text-amber-600 bg-amber-50 px-1.5 rounded">Draft</span>
