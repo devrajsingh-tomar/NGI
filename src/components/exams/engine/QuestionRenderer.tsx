@@ -53,9 +53,15 @@ export default function QuestionRenderer({
     }
   };
 
-  const isChecked = (choice: string) => {
+  const isChecked = (choice: string, optionId?: string, index?: number) => {
     if (question.type === "MCQ_MULTIPLE") {
-      return Array.isArray(value) && value.includes(choice);
+      return Array.isArray(value) && value.includes(optionId);
+    }
+    if (question.type === "ASSERTION_REASON") {
+      return value === (index! + 1).toString();
+    }
+    if (["MCQ_SINGLE", "MATCH_THE_FOLLOWING"].includes(question.type)) {
+      return value === optionId;
     }
     return value === choice;
   };
@@ -200,11 +206,12 @@ export default function QuestionRenderer({
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {displayOptions.map((opt: any, i: number) => {
                                     const label = String.fromCharCode(65 + i);
-                                    const active = isChecked(label);
+                                    const val = question.type === "ASSERTION_REASON" ? (i + 1).toString() : opt._id;
+                                    const active = isChecked(label, opt._id, i);
                                     return (
                                         <div 
                                             key={i} 
-                                            onClick={() => handleMultipleChoiceChange(label)}
+                                            onClick={() => handleMultipleChoiceChange(val)}
                                             className={cn(
                                                 "flex items-center gap-6 p-6 rounded-3xl border-4 transition-all cursor-pointer group",
                                                 active 
@@ -288,8 +295,10 @@ export default function QuestionRenderer({
         {/* MCQ Style Quick Selector */}
         {["MCQ_SINGLE", "MCQ_MULTIPLE", "MATCH_THE_FOLLOWING", "ASSERTION_REASON"].includes(question.type) && (
             <div className="flex items-center justify-center gap-4 md:gap-8 w-full max-w-5xl overflow-x-auto no-scrollbar py-2">
-                {optionLabels.map((choice) => {
-                    const active = isChecked(choice);
+                {optionLabels.map((choice, i) => {
+                    const optId = displayOptions[i]?._id;
+                    const val = question.type === "ASSERTION_REASON" ? (i + 1).toString() : optId;
+                    const active = isChecked(choice, optId, i);
                     return (
                         <label key={choice} className="flex flex-col items-center gap-1 cursor-pointer group shrink-0">
                             <input
@@ -297,7 +306,7 @@ export default function QuestionRenderer({
                                 name="answer"
                                 className="peer hidden"
                                 checked={active}
-                                onChange={() => handleMultipleChoiceChange(choice)}
+                                onChange={() => handleMultipleChoiceChange(val)}
                             />
                             <div className={cn(
                                 "w-12 h-12 md:w-14 md:h-14 rounded-2xl border-2 transition-all flex items-center justify-center font-black text-xl",

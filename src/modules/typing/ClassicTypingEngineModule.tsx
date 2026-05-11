@@ -311,90 +311,138 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
   const passageWords = internalPassage.split(' ');
 
   return (
-    <div ref={containerRef} className={`flex flex-col bg-[#f0f0f0] font-sans ${isFullScreen ? 'h-screen' : 'min-h-screen'}`}>
-      {/* Top Blue Header */}
-      <div className="bg-[#007bff] text-white text-center py-2 text-sm font-bold shadow-sm">
-        Typing Test Id {currentExam?.passageId?._id?.substring(0, 5) || '31848'} - {config.title}
-      </div>
-
-      {/* Second Black Header */}
-      <div className="bg-black text-white px-4 py-1 text-xs font-bold">
-        {currentExam?.title || 'Official Typing Test'}
-      </div>
-
-      {/* Third Header (Controls & Timer) */}
-      <div className="bg-white px-6 py-2 flex justify-between items-center border-b border-gray-300 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <button onClick={toggleFullScreen} className="text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-black transition-all flex items-center gap-2 shadow-sm shadow-slate-200" title={isFullScreen ? "Exit Exam Mode" : "Activate Exam Mode"}>
-               <div className={cn("w-2 h-2 rounded-full animate-pulse", isFullScreen ? "bg-rose-500" : "bg-emerald-500")} />
-               {isFullScreen ? "Exit Exam Mode" : "Exam Mode"}
-            </button>
+    <div ref={containerRef} className={cn(
+      "flex flex-col bg-slate-50 font-sans selection:bg-primary/20 transition-all duration-500",
+      isFullScreen ? 'h-screen' : 'min-h-screen'
+    )}>
+      {/* Precision Navigation Bar */}
+      <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-50">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
+              NGIT <span className="text-primary not-italic">EXAM ENGINE</span>
+            </h1>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1.5">
+              Protocol: {currentExam?.title || 'Standardized Typing Assessment'}
+            </p>
           </div>
-          <div className="hidden sm:flex items-center gap-2 border border-gray-300 rounded px-2 py-1 bg-gray-50">
-            <span className="text-xs font-bold text-gray-600 mr-1">Text Size:</span>
-            <button onClick={() => setFontSize(f => Math.max(12, f - 2))} className="w-5 h-5 flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-100 rounded text-xs font-bold text-gray-700 shadow-sm">-</button>
-            <span className="text-xs font-bold w-6 text-center text-gray-800">{fontSize}px</span>
-            <button onClick={() => setFontSize(f => Math.min(32, f + 2))} className="w-5 h-5 flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-100 rounded text-xs font-bold text-gray-700 shadow-sm">+</button>
-          </div>
-          <div className="hidden sm:flex items-center gap-2 border border-gray-300 rounded px-2 py-1 bg-gray-50">
-            <span className="text-xs font-bold text-gray-600 mr-1">Bg Color:</span>
-            <div className="flex gap-1">
-              {['#a1c984', '#e2e8f0', '#ffffff', '#fef3c7', '#dbeafe', '#ffebcd'].map(color => (
-                <button 
-                  key={color}
-                  onClick={() => setBgColor(color)}
-                  className={`w-5 h-5 rounded border shadow-sm transition-transform hover:scale-110 ${bgColor === color ? 'ring-2 ring-blue-500 border-transparent' : 'border-gray-300'}`}
-                  style={{ backgroundColor: color }}
-                  title="Change typing area color"
-                />
-              ))}
-            </div>
+          <div className="h-10 w-px bg-slate-200 hidden md:block" />
+          <div className="hidden md:flex flex-col">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Resource Identifier</p>
+            <p className="text-sm font-bold text-slate-600 mt-1">Ref_{currentExam?.passageId?._id?.substring(0, 8) || 'GLOBAL_31848'}</p>
           </div>
         </div>
-        
-        <div className="flex items-center gap-6">
-          <div className="text-sm font-bold flex items-center gap-2">
-            Time left:- <span className="text-lg">{formatTime(timeLeft)}</span>
+
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col items-end">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Temporal Registry</p>
+            <div className="flex items-center gap-3">
+              <TimerDisplay className="text-2xl font-black text-slate-900 tabular-nums" />
+              <div className={cn(
+                "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                timeLeft < 60 ? "bg-rose-100 text-rose-600 animate-pulse" : "bg-slate-100 text-slate-600"
+              )}>
+                {timeLeft < 60 ? "Critical" : "Stable"}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-             <div className="w-10 h-10 bg-gray-200 rounded border border-gray-400 overflow-hidden flex items-center justify-center relative">
+          <div className="h-12 w-px bg-slate-200" />
+          <div className="flex items-center gap-4">
+             <div className="text-right hidden sm:block">
+                <p className="text-xs font-black text-slate-900 leading-none uppercase">{userName}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verified Candidate</p>
+             </div>
+             <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg border-2 border-white overflow-hidden">
                 {userImage ? (
                    <img src={userImage} alt="Candidate" className="w-full h-full object-cover" />
                 ) : (
-                   <svg className="w-8 h-8 text-gray-500 mt-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                   userName[0]
                 )}
              </div>
-             <span className="text-[10px] font-bold uppercase mt-1">{userName}</span>
           </div>
         </div>
       </div>
 
-      {/* Fourth Header (Layout & Language) */}
-      <div className="bg-[#007bff] text-white px-6 py-1 flex gap-8 text-xs font-bold border-b-2 border-blue-800">
-        <span>Keyboard Layout: {settings.layout}</span>
-        <span>Language: {settings.language}</span>
+      {/* Secondary Controls Bar */}
+      <div className="bg-slate-50 border-b border-slate-200 px-6 py-2 flex justify-between items-center shadow-inner">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={toggleFullScreen} 
+            className={cn(
+              "text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all flex items-center gap-2 border",
+              isFullScreen 
+                ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100" 
+                : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+            )}
+          >
+             <div className={cn("w-2 h-2 rounded-full", isFullScreen ? "bg-rose-500 animate-pulse" : "bg-slate-400")} />
+             {isFullScreen ? "Deactivate Exam Mode" : "Activate Exam Mode"}
+          </button>
+
+          <div className="h-6 w-px bg-slate-200" />
+          
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Typeface</span>
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5">
+              <button onClick={() => setFontSize(f => Math.max(12, f - 2))} className="w-7 h-7 flex items-center justify-center hover:bg-slate-50 rounded-md text-slate-600">-</button>
+              <span className="text-xs font-black w-8 text-center text-slate-900 tabular-nums">{fontSize}</span>
+              <button onClick={() => setFontSize(f => Math.min(32, f + 2))} className="w-7 h-7 flex items-center justify-center hover:bg-slate-50 rounded-md text-slate-600">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Environment</span>
+             <div className="flex gap-1.5 p-1 bg-white border border-slate-200 rounded-xl">
+               {['#ffffff', '#f8fafc', '#f1f5f9', '#fefce8', '#f0f9ff', '#fff7ed'].map(color => (
+                 <button 
+                   key={color}
+                   onClick={() => setBgColor(color)}
+                   className={cn(
+                     "w-6 h-6 rounded-lg border transition-all hover:scale-110",
+                     bgColor === color ? "border-primary ring-2 ring-primary/20" : "border-slate-200"
+                   )}
+                   style={{ backgroundColor: color }}
+                 />
+               ))}
+             </div>
+          </div>
+          <div className="h-6 w-px bg-slate-200" />
+          <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+            <span className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              {settings.layout}
+            </span>
+            <span className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+              {settings.language}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Exercise and Duration Controls – only in official exam mode */}
       {showExerciseSwitcher && (
-        <div className="bg-[#e0e0e0] border-b border-gray-400 p-2 flex flex-wrap items-center gap-6 text-sm font-bold text-gray-800 shadow-sm relative z-10 px-6">
-          <div className="flex items-center gap-2">
-              <span className="text-gray-700">Duration:</span>
+      {/* Exercise Framework Switcher */}
+      {showExerciseSwitcher && (
+        <div className="bg-slate-900 border-b border-slate-800 p-2.5 flex flex-wrap items-center gap-8 text-sm font-bold text-white shadow-xl relative z-10 px-8">
+          <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Duration Profile</span>
               <select 
                 value={internalDuration} 
                 onChange={(e) => setInternalDuration(Number(e.target.value))}
-                className="border border-gray-400 px-2 py-1 bg-white outline-none min-w-[120px] focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer text-xs font-black tracking-widest"
                 disabled={isActive && !isFinished && typedText.length > 0}
               >
                 {[1, 2, 3, 4, 5, 10, 15, 20].map(min => (
-                  <option key={min} value={min}>{min} Minutes</option>
+                  <option key={min} value={min}>{min} MIN CYCLE</option>
                 ))}
               </select>
           </div>
-          <div className="flex items-center gap-2 flex-1 max-w-[400px]">
-              <span className="text-gray-700">Exercise:</span>
-              <div className="flex items-center gap-1 w-full">
+          <div className="flex items-center gap-3 flex-1 max-w-xl">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Operational Exercise</span>
+              <div className="flex items-center gap-2 w-full">
                  <button 
                     onClick={() => {
                        if (currentPassageIndex > 0) {
@@ -408,8 +456,8 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
                        }
                     }}
                     disabled={currentPassageIndex <= 0 || (isActive && !isFinished && typedText.length > 0)}
-                    className="border border-gray-400 bg-gray-100 hover:bg-gray-200 px-3 py-1 disabled:opacity-50 transition-colors cursor-pointer"
-                 >&lt;&lt;</button>
+                    className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
+                 >{"<"}</button>
                  <select 
                     value={currentPassageIndex}
                     onChange={(e) => {
@@ -423,17 +471,16 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
 
                     }}
                     disabled={isActive && !isFinished && typedText.length > 0}
-                    className="border border-gray-400 px-2 py-1 bg-white outline-none flex-1 focus:ring-2 focus:ring-blue-500 min-w-0 truncate cursor-pointer"
+                    className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white outline-none flex-1 focus:ring-2 focus:ring-primary/40 min-w-0 truncate cursor-pointer text-xs font-black tracking-widest uppercase"
                  >
                     {passagesList.length > 0 ? (
                       passagesList.map((p, i) => (
                          <option key={p._id || i} value={i}>
-                            {isBookPractice ? `Ch. ${i + 1}/${passagesList.length} - ${p.title?.substring(0, 40)}` : `Exercise: ${i + 1}/${passagesList.length} - ${p.title?.substring(0, 30)}`}
-
+                            {isBookPractice ? `Ch. ${i + 1}/${passagesList.length} • ${p.title?.substring(0, 40)}` : `X_${i + 1} • ${p.title?.substring(0, 30)}`}
                          </option>
                       ))
                     ) : (
-                      <option value={0}>Loading Exercises...</option>
+                      <option value={0}>SYNCHRONIZING EXERCISES...</option>
                     )}
                  </select>
                  <button 
@@ -449,23 +496,24 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
                        }
                     }}
                     disabled={currentPassageIndex >= passagesList.length - 1 || (isActive && !isFinished && typedText.length > 0)}
-                    className="border border-gray-400 bg-gray-100 hover:bg-gray-200 px-3 py-1 disabled:opacity-50 transition-colors cursor-pointer"
-                 >&gt;&gt;</button>
+                    className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 disabled:opacity-20 transition-all flex items-center justify-center font-black"
+                 >{">"}</button>
               </div>
           </div>
         </div>
       )}
+      )}
 
-      {/* Main Typing Area */}
-      <div className="flex-1 p-4 md:p-6 flex flex-col gap-4 max-w-[1400px] mx-auto w-full min-h-0">
-        {/* Passage Box */}
+      {/* Main Execution Area */}
+      <div className="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full min-h-0">
+        {/* Source Text Buffer */}
         <div 
             ref={passageContainerRef}
-            className="flex-1 relative bg-white border border-gray-400 p-4 overflow-y-auto text-gray-800 leading-relaxed break-words scroll-smooth"
+            className="flex-1 relative bg-white border border-slate-200 rounded-[2.5rem] p-10 overflow-y-auto text-slate-800 leading-[1.8] break-words scroll-smooth shadow-sm"
             style={{ 
               fontSize: `${fontSize}px`, 
               fontFamily: typingFont,
-              minHeight: '200px',
+              minHeight: '220px',
               scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
             }}
             onCopy={(e) => config.disableCopyPaste !== false && e.preventDefault()}
@@ -538,7 +586,7 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
           )}
         </div>
 
-        {/* Typing Box */}
+        {/* Data Input Stream */}
         <textarea
             ref={inputRef}
             value={typedText}
@@ -548,32 +596,32 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
             disabled={isFinished}
             spellCheck={false}
             autoComplete="off"
-            className="flex-1 border-2 border-gray-400 p-4 overflow-y-auto outline-none focus:border-blue-600 text-black font-semibold leading-relaxed resize-none shadow-inner transition-colors duration-300"
+            className="flex-1 border-4 border-slate-200 rounded-[3rem] p-10 overflow-y-auto outline-none focus:border-primary/40 text-slate-900 font-bold leading-[1.8] resize-none shadow-2xl transition-all duration-500"
             style={{ 
               fontSize: `${fontSize + 2}px`, 
               fontFamily: typingFont,
-              minHeight: '200px', 
+              minHeight: '220px', 
               backgroundColor: bgColor,
               scrollbarWidth: settings.showScrollbar ? 'auto' : 'none'
             }}
         />
       </div>
 
-      {/* Footer Controls */}
-      <div className="bg-[#f0f0f0] p-4 border-t border-gray-300 flex justify-center items-center relative h-16">
-        <div className="flex items-center gap-4 max-w-[1400px] mx-auto w-full justify-center relative">
+      {/* Footer Authorization Area */}
+      <div className="bg-white p-6 border-t border-slate-200 flex justify-center items-center relative h-24">
+        <div className="flex items-center gap-6 max-w-7xl mx-auto w-full justify-center relative">
           <button 
             onClick={() => router.back()}
-            className="absolute left-0 bg-[#dc3545] text-white px-8 py-2 rounded text-sm font-bold hover:bg-[#c82333] transition-colors"
+            className="absolute left-0 px-8 py-4 rounded-2xl text-slate-500 font-black uppercase tracking-widest hover:bg-slate-100 transition-all"
           >
-            Back
+            Terminal Exit
           </button>
           
           <button 
             onClick={() => endTest()}
-            className="bg-[#337ab7] text-white px-10 py-2 rounded text-sm font-bold hover:bg-[#286090] transition-colors"
+            className="bg-primary text-white px-16 py-5 rounded-[2rem] font-black uppercase tracking-[0.3em] hover:bg-primary-dark hover:shadow-2xl hover:shadow-primary/40 transition-all hover:-translate-y-1 active:translate-y-0"
           >
-            Submit Exam
+            Authorize Submission
           </button>
           
           <button 
@@ -582,10 +630,10 @@ export const ClassicTypingEngineModule: React.FC<ClassicTypingEngineModuleProps>
                 resetTest();
               }
             }}
-            className="absolute right-0 w-8 h-8 bg-[#9b59b6] rounded-full flex items-center justify-center cursor-pointer text-white hover:bg-[#8e44ad] transition-colors shadow-lg"
-            title="Reset Test"
+            className="absolute right-0 w-12 h-12 bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer text-slate-400 hover:text-primary hover:border-primary/50 transition-all shadow-sm"
+            title="Reset Protocol"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
           </button>

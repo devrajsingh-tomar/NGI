@@ -111,8 +111,7 @@ export default function HeroSlider() {
                         </div>
                     )}
 
-                    {/* Content */}
-                    <div className="relative h-full flex items-center">
+                    <div className="relative h-full flex items-center pt-24 lg:pt-32">
                         <div className="container-custom">
                             <div className="max-w-4xl animate-slide-up">
                                 {slide.subtitle && (

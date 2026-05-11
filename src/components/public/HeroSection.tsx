@@ -85,7 +85,7 @@ export default function HeroSection({ blocks }: { blocks?: any[] }) {
 
                                 {/* Content Overlay (Only if not empty) */}
                                 {!isTextEmpty && (
-                                    <div className="container relative z-10 px-6 mx-auto">
+                                    <div className="container relative z-10 px-6 mx-auto pt-32 lg:pt-44 pb-20">
                                         <div className="max-w-4xl space-y-8 text-center lg:text-left">
                                             <motion.div
                                                 initial={{ opacity: 0, y: 30 }}

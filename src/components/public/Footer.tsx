@@ -70,11 +70,13 @@ export default async function Footer() {
     };
 
     return (
-        <footer className="relative bg-slate-950 text-slate-400 border-t border-white/5 pt-24 pb-12 overflow-hidden">
-            {/* Architectural Design Elements */}
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-50" />
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-64 -mt-64 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none" />
+        <footer className="relative bg-slate-950 text-slate-400 border-t border-white/5 pt-32 pb-12 overflow-hidden">
+            {/* Precision Grid Overlay */}
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,transparent,black)] opacity-10 pointer-events-none" />
+            
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[160px] -mr-96 -mt-96 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[160px] -ml-96 -mb-96 pointer-events-none" />
             
             <div className="container-custom relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
@@ -106,23 +108,26 @@ export default async function Footer() {
                                 )}
                             </Link>
                             
-                            <p className="text-lg text-slate-400 font-medium leading-relaxed max-w-md">
-                                {footerData.description || "Empowering the next generation with advanced technical education and strategic career development since 2010."}
+                            <p className="text-xl text-slate-400 font-medium leading-relaxed max-w-lg">
+                                {footerData.description || "Architecting the future of technical education with precision, innovation, and industry-first success strategies."}
                             </p>
                         </div>
 
                         {/* Social Connectivity */}
-                        <div className="space-y-4">
-                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] ml-1">Connect with us</p>
+                        <div className="space-y-6">
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] ml-1">Social Connectivity Matrix</p>
                             <div className="flex flex-wrap gap-4">
                                 {footerData.social?.map((social, idx) => (
                                     <Link
                                         key={idx}
                                         href={social.url}
                                         target="_blank"
-                                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white hover:border-amber-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all duration-500 group"
+                                        className="w-14 h-14 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white hover:border-primary/50 hover:shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all duration-500 group relative overflow-hidden"
                                     >
-                                        {getIcon(social.platform)}
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="relative z-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                            {getIcon(social.platform)}
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
@@ -168,22 +173,23 @@ export default async function Footer() {
                                         <a 
                                             key={idx} 
                                             href={link.href} 
-                                            className="group flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all duration-500"
+                                            className="group flex items-center gap-5 p-5 rounded-[2rem] bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500"
                                         >
                                             <div className={cn(
-                                                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110 shadow-lg",
-                                                isPhone ? "bg-primary/20 text-amber-400 group-hover:bg-primary group-hover:text-white group-hover:shadow-primary/40" : 
-                                                isMail ? "bg-primary/20 text-amber-400 group-hover:bg-primary group-hover:text-white group-hover:shadow-primary/40" : 
-                                                "bg-slate-700/30 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-900 group-hover:shadow-white/20"
+                                                "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:rotate-12 shadow-2xl",
+                                                isPhone ? "bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white" : 
+                                                isMail ? "bg-indigo-500/20 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white" : 
+                                                "bg-slate-700/30 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-900"
                                             )}>
-                                                {isPhone ? <Phone className="w-4 h-4" /> : isMail ? <Mail className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
+                                                {isPhone ? <Phone className="w-5 h-5" /> : isMail ? <Mail className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-[12px] font-bold text-white truncate group-hover:translate-x-1 transition-transform">
+                                                <p className="text-[13px] font-black text-white truncate group-hover:translate-x-1 transition-transform">
                                                     {link.label.split(":")[1]?.trim() || link.label}
                                                 </p>
-                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-1">
-                                                    {isPhone ? "Call Center" : isMail ? "Email Support" : "HQ Office"}
+                                                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 mt-1.5 flex items-center gap-2">
+                                                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+                                                    {isPhone ? "Direct Navigation" : isMail ? "Digital Logistics" : "Spatial Identity"}
                                                 </p>
                                             </div>
                                         </a>

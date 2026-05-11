@@ -117,7 +117,7 @@ export const submitQuiz = createSafeAction(
     { schema: SubmitQuizSchema, requireAuth: true, roles: [UserRole.STUDENT, UserRole.ADMIN], rateLimit: RATE_LIMIT_CONFIGS.SENSITIVE },
     async ({ quizId, answers, timeTaken }, session) => {
         await connectDB();
-        const quiz = await Quiz.findById(quizId).populate("questions");
+        const quiz = await Quiz.findById(quizId).populate("questions").populate("courseId");
         if (!quiz) throw new Error("Quiz not found");
 
         let score = 0;
@@ -202,11 +202,15 @@ export const submitQuiz = createSafeAction(
                 }
             }
 
+            const isOptionType = ["MCQ_SINGLE", "MCQ_MULTIPLE", "MATCH_THE_FOLLOWING"].includes(question.type);
+            const isNumericType = ["NUMERIC", "ASSERTION_REASON"].includes(question.type);
+
             answersToCreate.push({
                 attemptId: attempt._id,
                 questionId: question._id,
-                selectedOptionIds: Array.isArray(userAnswer) ? userAnswer : (userAnswer ? [userAnswer] : []),
-                numericAnswer: question.type === "NUMERIC" ? userAnswer : undefined,
+                selectedOptionIds: isOptionType ? (Array.isArray(userAnswer) ? userAnswer : [userAnswer]) : [],
+                numericAnswer: isNumericType ? parseFloat(userAnswer) : undefined,
+                textResponse: !isOptionType && !isNumericType ? String(userAnswer) : undefined,
                 timeTakenSeconds: 0,
                 evaluation: {
                     isEvaluated: true,
@@ -242,7 +246,7 @@ export const submitQuiz = createSafeAction(
                     score,
                     totalMarks,
                     attemptDate: new Date(),
-                    course: (enrollment?.courseId as any)?.title || "General",
+                    course: (enrollment?.courseId as any)?.title || (quiz.courseId as any)?.title || "General Mock Test",
                     publishStatus: "PUBLISHED", // Make it visible immediately
                     analysis: {
                         correctAnswers: correctCount,

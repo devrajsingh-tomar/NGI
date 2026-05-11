@@ -23,6 +23,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
     const [error, setError] = useState<string | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
     const [language, setLanguage] = useState<"en" | "hi">("en");
 
     // Unified State
@@ -57,9 +58,16 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
         fetchQuiz();
     }, [quizId]);
 
-    const handleSubmit = useCallback(async () => {
+    const handleSubmit = useCallback(async (isAutoSubmit = false) => {
         if (isSubmitting) return;
+        
+        if (!isAutoSubmit && !showConfirmSubmit) {
+            setShowConfirmSubmit(true);
+            return;
+        }
+
         setIsSubmitting(true);
+        setShowConfirmSubmit(false);
         const timeLimitSecs = (quiz?.settings?.timeLimit || 30) * 60;
         const timeTaken = timeLimitSecs - state.timer;
 
@@ -84,7 +92,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
             toast.error("Something went wrong during submission");
             setIsSubmitting(false);
         }
-    }, [isSubmitting, quiz, state.timer, state.answers, quizId, router]);
+    }, [isSubmitting, showConfirmSubmit, quiz, state.timer, state.answers, quizId, router]);
 
     // Timer logic
     useEffect(() => {
@@ -98,7 +106,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
     // Auto-submit on timeout
     useEffect(() => {
         if (state.timer === 0 && quiz && !isSubmitting) {
-            handleSubmit();
+            handleSubmit(true);
         }
     }, [state.timer, quiz, isSubmitting, handleSubmit]);
 
@@ -138,7 +146,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
         if (warnings >= 3 && lastWarnedRef.current < 3) {
             lastWarnedRef.current = 3;
             toast.error("Max tab switches reached. Auto-submitting exam.");
-            handleSubmit();
+            handleSubmit(true);
         } else if (warnings > 0 && warnings < 3 && lastWarnedRef.current !== warnings) {
             lastWarnedRef.current = warnings;
             toast.warning(`Warning ${warnings}/3: Do not switch tabs!`);
@@ -256,7 +264,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
                         if (state.currentQuestionIndex < quiz.questions.length - 1) {
                             navigateTo(state.currentQuestionIndex + 1);
                         } else {
-                            handleSubmit();
+                            handleSubmit(false);
                         }
                     }}
                     onReset={() => {
@@ -294,6 +302,36 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
                 <div className="fixed inset-0 bg-white/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
                     <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
                     <p className="font-black text-slate-900 uppercase tracking-widest">Submitting Your Response...</p>
+                </div>
+            )}
+
+            {showConfirmSubmit && (
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-[2.5rem] max-w-md w-full p-8 md:p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+                        <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <AlertCircle className="w-10 h-10 text-amber-600" />
+                        </div>
+                        <h3 className="text-2xl font-black text-slate-900 text-center mb-2">Final Submission?</h3>
+                        <p className="text-slate-500 text-center font-medium mb-8">
+                            Are you sure you want to end the test? You have <span className="text-primary font-bold">{Math.floor(state.timer / 60)}m {state.timer % 60}s</span> remaining.
+                        </p>
+                        
+                        <div className="space-y-3">
+                            <Button 
+                                onClick={() => handleSubmit(false)}
+                                className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg shadow-xl shadow-emerald-500/20"
+                            >
+                                Yes, Submit My Exam
+                            </Button>
+                            <Button 
+                                variant="ghost"
+                                onClick={() => setShowConfirmSubmit(false)}
+                                className="w-full h-14 rounded-2xl text-slate-400 font-bold hover:bg-slate-50"
+                            >
+                                No, I want to review more
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

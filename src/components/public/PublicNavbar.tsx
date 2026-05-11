@@ -68,37 +68,58 @@ export default function PublicNavbar() {
 
     return (
         <nav className={cn(
-            "sticky top-0 z-50 w-full transition-all duration-300",
+            "fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl transition-all duration-500 rounded-[2rem]",
             isScrolled
-                ? "bg-white/95 backdrop-blur-md shadow-md py-3"
-                : "bg-white py-5"
+                ? "bg-white/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20 py-2.5"
+                : "bg-white/40 backdrop-blur-md border border-white/10 py-4"
         )}>
             <div className="container-custom">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
+                    <Link href="/" className="flex items-center gap-4 group">
                         {headerData?.logoImage ? (
-                            <img src={headerData.logoImage} alt="Logo" className="h-20 md:h-24 w-auto object-contain" />
+                            <div className="relative p-1 bg-white rounded-2xl shadow-sm border border-slate-100 group-hover:shadow-md transition-all">
+                                <img src={headerData.logoImage} alt="Logo" className="h-12 md:h-16 w-auto object-contain" />
+                            </div>
                         ) : (
-                            <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center font-bold text-white text-3xl shadow-lg group-hover:scale-105 transition-transform duration-300">
-                                N
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center font-black text-white text-2xl shadow-2xl group-hover:rotate-[10deg] transition-transform duration-500">
+                                    N
+                                </div>
+                                <div className="hidden sm:block">
+                                    <h3 className="text-xl font-black tracking-tighter text-slate-900 leading-none">NGIT</h3>
+                                    <p className="text-[8px] font-black uppercase tracking-[0.3em] text-primary mt-1">Study Zone</p>
+                                </div>
                             </div>
                         )}
                     </Link>
 
                     {/* Desktop Menu */}
                     <div className="hidden lg:flex items-center gap-1">
-                        <div className="flex items-center gap-1">
-                            {navLinks.map((link, idx) => (
+                        <div className="flex items-center bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
+                            {navLinks.slice(0, 5).map((link, idx) => (
                                 <Link
                                     key={idx}
                                     href={link.href}
-                                    className="px-2 xl:px-3 py-2 text-[13px] xl:text-sm whitespace-nowrap font-bold text-gray-700 hover:text-primary hover:bg-primary/5 rounded-lg transition-all relative group"
+                                    className="px-4 py-2 text-[13px] font-black text-slate-600 hover:text-slate-900 hover:bg-white rounded-xl transition-all relative group shadow-none hover:shadow-sm"
                                 >
                                     {link.label}
-                                    <span className="absolute bottom-1 left-3 right-3 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                                 </Link>
                             ))}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="px-4 py-2 text-[13px] font-black text-slate-600 hover:text-slate-900 hover:bg-white rounded-xl transition-all flex items-center gap-2 outline-none">
+                                        More <Menu className="w-3.5 h-3.5" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="rounded-2xl p-2 w-48 border-slate-100 shadow-2xl" sideOffset={10}>
+                                    {navLinks.slice(5).map((link, idx) => (
+                                        <DropdownMenuItem key={idx} asChild className="rounded-xl p-3 cursor-pointer font-bold text-slate-600 focus:text-primary focus:bg-primary/5">
+                                            <Link href={link.href}>{link.label}</Link>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
 
                         <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
