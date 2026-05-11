@@ -37,7 +37,10 @@ const staticFallbackContent = (
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Tele-Navigation</p>
-                                    <a href="tel:+919839446340" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 98394 46340</a>
+                                    <div className="flex flex-col">
+                                        <a href="tel:+919919303047" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 9919303047</a>
+                                        <a href="tel:+919919303032" className="text-2xl font-black text-slate-900 hover:text-primary transition-colors tracking-tight">+91 9919303032</a>
+                                    </div>
                                 </div>
                             </div>
 
@@ -47,7 +50,7 @@ const staticFallbackContent = (
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Digital Logistics</p>
-                                    <a href="mailto:info@ngit.in" className="text-2xl font-black text-slate-900 hover:text-indigo-600 transition-colors tracking-tight">info@ngit.in</a>
+                                    <a href="mailto:ngistudyzone@gmail.com" className="text-2xl font-black text-slate-900 hover:text-indigo-600 transition-colors tracking-tight">ngistudyzone@gmail.com</a>
                                 </div>
                             </div>
 

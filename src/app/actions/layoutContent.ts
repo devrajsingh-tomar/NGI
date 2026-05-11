@@ -48,8 +48,8 @@ export async function getHeaderFooterData() {
                 {
                     title: "Contact",
                     links: [
-                        { label: "Email: info@ngistudyzone.com", href: "mailto:info@ngistudyzone.com" },
-                        { label: "Phone: +91 1234567890", href: "tel:+911234567890" },
+                        { label: "Email: ngistudyzone@gmail.com", href: "mailto:ngistudyzone@gmail.com" },
+                        { label: "Phone: +91 9919303047, 9919303032", href: "tel:+919919303047" },
                     ],
                 },
             ],

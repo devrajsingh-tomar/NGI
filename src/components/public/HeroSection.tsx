@@ -35,7 +35,7 @@ export default function HeroSection({ blocks }: { blocks?: any[] }) {
     if (sliderBlocks.length === 0) return null;
 
     return (
-        <section className="relative w-full overflow-hidden bg-slate-950">
+        <section className="relative overflow-hidden bg-slate-950 mt-28 lg:mt-32 rounded-[2rem] lg:rounded-[3rem] mx-4 lg:mx-8 w-[calc(100%-2rem)] lg:w-[calc(100%-4rem)] shadow-2xl">
             <Swiper
                 modules={[Autoplay, Navigation, Pagination, EffectFade]}
                 spaceBetween={0}
