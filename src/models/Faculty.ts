@@ -22,9 +22,9 @@ export interface IFaculty extends Document {
 
 const FacultySchema = new Schema<IFaculty>(
     {
-        name: { type: String, required: true },
-        position: { type: String, required: true },
-        email: { type: String, required: true },
+        name: { type: String },
+        position: { type: String },
+        email: { type: String },
         phone: { type: String },
         image: { type: String },
         qualification: { type: String },

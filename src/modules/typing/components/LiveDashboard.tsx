@@ -95,7 +95,11 @@ export const LiveDashboard: React.FC = () => {
 /**
  * TimerDisplay Component
  */
-export const TimerDisplay: React.FC = () => {
+interface TimerDisplayProps {
+  className?: string;
+}
+
+export const TimerDisplay: React.FC<TimerDisplayProps> = ({ className }) => {
   const { timeLeft, toggleFullScreen, isFullScreen } = useTypingStore();
 
   const formatTime = (seconds: number) => {
@@ -105,6 +109,14 @@ export const TimerDisplay: React.FC = () => {
   };
 
   const isLowTime = timeLeft < 60;
+
+  if (className) {
+    return (
+      <span className={className}>
+        {formatTime(timeLeft)}
+      </span>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full transition-all duration-500">

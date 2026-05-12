@@ -106,9 +106,8 @@ export default function EditFacultyPage() {
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Full Name <span className="text-red-500">*</span></label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Full Name</label>
                             <Input
-                                required
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="Dr. Rahul Sharma"
@@ -116,9 +115,8 @@ export default function EditFacultyPage() {
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Position / Title <span className="text-red-500">*</span></label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Position / Title</label>
                             <Input
-                                required
                                 value={formData.position}
                                 onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                                 placeholder="Head of Mathematics"
@@ -130,10 +128,9 @@ export default function EditFacultyPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1">
                             <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                                <Mail className="w-3 h-3" /> Email Address <span className="text-red-500">*</span>
+                                <Mail className="w-3 h-3" /> Email Address
                             </label>
                             <Input
-                                required
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}

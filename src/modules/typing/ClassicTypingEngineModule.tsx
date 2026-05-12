@@ -7,7 +7,7 @@ import { useTypingEngine } from './hooks/useTypingEngine';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { mapKeyToHindi } from './utils/hindiMapping';
-import { LiveDashboard, TimerDisplay } from './components/LiveDashboard';
+import { TimerDisplay } from './components/LiveDashboard';
 import { Speedometer } from './components/Speedometer';
 import { cn } from '@/lib/utils';
 import { normalizeChar } from './utils/calculations';
