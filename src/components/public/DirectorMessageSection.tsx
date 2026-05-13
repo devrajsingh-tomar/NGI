@@ -71,18 +71,18 @@ export default function DirectorMessageSection({ data, director }: { data?: any,
                                 {director.name}
                             </h2>
                             <div className="h-2 w-32 bg-gradient-to-r from-primary to-transparent rounded-full" />
-                            <h3 className="text-xl md:text-2xl text-primary font-black uppercase font-serif tracking-widest leading-none">
+                            <h3 className="text-xl md:text-2xl text-white font-black uppercase tracking-widest leading-none">
                                 {director.position || "Head of Institution"}
                             </h3>
                             {director.qualification && (
-                                <p className="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">{director.qualification}</p>
+                                <p className="text-xs font-black text-white uppercase tracking-[0.3em]">{director.qualification}</p>
                             )}
                         </div>
 
                         <div className="relative group max-w-xl">
                             <Quote className="w-32 h-32 text-primary opacity-5 absolute -top-16 -left-12 group-hover:scale-110 transition-transform duration-1000" />
                             <div className="relative pt-6">
-                                <p className="text-2xl md:text-3xl text-slate-300 font-medium leading-relaxed italic relative z-10 tracking-tight">
+                                <p className="text-2xl md:text-3xl text-white font-bold leading-relaxed italic relative z-10 tracking-tight">
                                     "{director.message || director.bio || "In an era of rapid digital evolution, we don't just teach technology; we architect the next generation of industrial leaders with a paradigm of excellence."}"
                                 </p>
                                 
