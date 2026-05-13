@@ -71,7 +71,7 @@ const nextConfig = {
                     },
                     {
                         key: "Content-Security-Policy",
-                        value: "frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com https://onecompiler.com;",
+                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://emkc.org; frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com https://onecompiler.com; img-src 'self' data: https:; font-src 'self' data:;",
                     },
                 ],
             },
