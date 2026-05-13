@@ -71,7 +71,7 @@ const nextConfig = {
                     },
                     {
                         key: "Content-Security-Policy",
-                        value: "frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com;",
+                        value: "frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com https://onecompiler.com;",
                     },
                 ],
             },
@@ -85,9 +85,6 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: "10mb",
         },
-    },
-    turbopack: {
-        root: /* turbopackIgnore: true */ process.cwd(),
     },
 } as any;
 
