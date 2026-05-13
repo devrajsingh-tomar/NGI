@@ -52,11 +52,8 @@ export default function DynamicRenderer({ sections, staticFallback, extraData, s
                     case "FacultySection":
                         return <FacultySection key={sectionKey} data={section} members={extraData?.faculty || []} />;
                     case "DirectorMessageSection": {
-                        const director = extraData?.director || (extraData?.faculty?.find((f: any) => 
-                            f.position?.toLowerCase().includes("director") || 
-                            f.position?.toLowerCase().includes("md") ||
-                            f.name?.toLowerCase().includes("javed")
-                        ) || extraData?.faculty?.[0]);
+                        const director = extraData?.director;
+                        if (!director) return null; // Don't show if no director/chairman info is configured
                         return <DirectorMessageSection key={sectionKey} data={section} director={director} />;
                     }
                     case "GalleryGrid":

@@ -59,8 +59,8 @@ export default function DirectorManagementPage() {
         <div className="p-8 pb-20 max-w-5xl mx-auto space-y-10">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic uppercase">Director <span className="text-primary">Profile</span></h1>
-                    <p className="text-slate-500 font-bold mt-1 uppercase tracking-widest text-xs">Separate Management from Faculty</p>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic uppercase">Chairman / Director <span className="text-primary">Profile</span></h1>
+                    <p className="text-slate-500 font-bold mt-1 uppercase tracking-widest text-xs">Separate Management from Faculty Module</p>
                 </div>
                 <Button 
                     onClick={handleSave} 
