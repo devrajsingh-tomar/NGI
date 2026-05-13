@@ -52,10 +52,10 @@ const defaultFaculty: Faculty[] = [
     },
 ];
 
-export default function FacultySection({ members, data }: { members?: any[], data?: any }) {
+export default function FacultySection({ members, data, showAll = false }: { members?: any[], data?: any, showAll?: boolean }) {
     const [page, setPage] = useState(0);
     const [selectedFaculty, setSelectedFaculty] = useState<any>(null);
-    const itemsPerPage = 4;
+    const itemsPerPage = showAll ? 1000 : 4;
 
     const title = data?.section_name || "Learn from the Industry Masters";
     const subtitle = data?.subtitle || "Elite Faculty";
@@ -80,7 +80,7 @@ export default function FacultySection({ members, data }: { members?: any[], dat
     if (displayFaculty.length === 0) return null;
 
     const totalPages = Math.ceil(displayFaculty.length / itemsPerPage);
-    const visibleFaculty = displayFaculty.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+    const visibleFaculty = showAll ? displayFaculty : displayFaculty.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
 
     return (
         <section id="faculty" className="py-24 bg-white relative overflow-hidden">
@@ -101,23 +101,25 @@ export default function FacultySection({ members, data }: { members?: any[], dat
                         </h2>
                     </div>
 
-                    {/* Elite Controls */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setPage(p => Math.max(0, p - 1))}
-                            disabled={page === 0}
-                            className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 shadow-sm hover:shadow-xl transition-all disabled:opacity-20 group"
-                        >
-                            <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
-                        </button>
-                        <button
-                            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                            disabled={page >= totalPages - 1}
-                            className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 shadow-sm hover:shadow-xl transition-all disabled:opacity-20 group"
-                        >
-                            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    </div>
+                    {/* Elite Controls - Only show if not showAll and multiple pages exist */}
+                    {!showAll && totalPages > 1 && (
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                disabled={page === 0}
+                                className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 shadow-sm hover:shadow-xl transition-all disabled:opacity-20 group"
+                            >
+                                <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+                            </button>
+                            <button
+                                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                                disabled={page >= totalPages - 1}
+                                className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 shadow-sm hover:shadow-xl transition-all disabled:opacity-20 group"
+                            >
+                                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -253,13 +255,15 @@ export default function FacultySection({ members, data }: { members?: any[], dat
                 </DialogContent>
             </Dialog>
 
-            {/* View All Sequence */}
-            <div className="mt-20 text-center">
-                <Link href="/faculty" className="inline-flex items-center gap-3 text-slate-400 hover:text-primary font-black uppercase tracking-widest text-[11px] transition-colors group">
-                    Meet All Industry masters & Faculty
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-            </div>
+            {/* View All Sequence - Only show if NOT showAll */}
+            {!showAll && (
+                <div className="mt-20 text-center">
+                    <Link href="/faculty" className="inline-flex items-center gap-3 text-slate-400 hover:text-primary font-black uppercase tracking-widest text-[11px] transition-colors group">
+                        Meet All Industry masters & Faculty
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                </div>
+            )}
         </section>
     );
 }

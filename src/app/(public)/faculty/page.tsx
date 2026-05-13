@@ -34,7 +34,7 @@ export default async function PublicFacultyPage() {
 
                 {/* Full Faculty List */}
                 <div className="pt-20">
-                    <FacultySection members={facultyMembers} />
+                    <FacultySection members={facultyMembers} showAll={true} />
                 </div>
             </div>
         </div>
