@@ -61,7 +61,7 @@ export default async function PublicHomePage() {
 
     const heroSlides = slidesRes.success ? slidesRes.slides : [];
     const facultyMembers = (facultyRes.success ? facultyRes.faculty : []).slice(0, 6);
-    const publicCourses = (coursesRes.success ? coursesRes.courses : []).slice(0, 6);
+    const publicCourses = (coursesRes.success ? coursesRes.courses : []).slice(0, 3);
     const publicEvents = (eventsRes.success ? eventsRes.events : []).slice(0, 6);
     const ALLOWED_GALLERY_CATEGORIES = ["Campus", "Events", "Students", "Faculty"];
     const galleryImages = (galleryRes.success ? galleryRes.images : [])
