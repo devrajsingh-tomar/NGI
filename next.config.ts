@@ -71,7 +71,7 @@ const nextConfig = {
                     },
                     {
                         key: "Content-Security-Policy",
-                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://emkc.org; frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com https://onecompiler.com; img-src 'self' data: https:; font-src 'self' data:; worker-src 'self' blob:;",
+                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net https://checkout.razorpay.com https://unpkg.com; script-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.razorpay.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; connect-src 'self' https://emkc.org https://*.emkc.org https://api.razorpay.com https://lumberjack.razorpay.com; frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com https://onecompiler.com https://*.onecompiler.com https://checkout.razorpay.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob:;",
                     },
                 ],
             },

@@ -33,13 +33,26 @@ export default function CodeCompiler() {
     const [output, setOutput] = useState("");
     const [isRunning, setIsRunning] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
-
     const [activeTab, setActiveTab] = useState<"editor" | "output">("editor");
+    
+    const [isEditorReady, setIsEditorReady] = useState(false);
+    const [editorError, setEditorError] = useState(false);
 
     useEffect(() => {
         setCode(selectedLang.defaultCode);
         setOutput("");
         setShowPreview(false);
+        setIsEditorReady(false);
+        setEditorError(false);
+
+        // Fail-safe timer for editor loading
+        const timer = setTimeout(() => {
+            if (!isEditorReady) {
+                console.warn("Monaco Editor taking too long, checking for errors...");
+            }
+        }, 5000);
+
+        return () => clearTimeout(timer);
     }, [selectedLang]);
 
     const runCode = async () => {
@@ -184,30 +197,49 @@ export default function CodeCompiler() {
                         </div>
 
                         <div className="h-[450px] md:h-[600px] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden border border-white/5 bg-slate-950">
-                            <Editor
-                                height="100%"
-                                language={selectedLang.monaco}
-                                theme="vs-dark"
-                                value={code}
-                                loading={
-                                    <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-950">
-                                        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] animate-pulse">Initializing IDE...</p>
+                            {editorError ? (
+                                <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-slate-950">
+                                    <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 mb-6">
+                                        <ShieldCheck className="w-8 h-8" />
                                     </div>
-                                }
-                                onChange={(value) => setCode(value || "")}
-                                options={{
-                                    fontSize: 14,
-                                    fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
-                                    minimap: { enabled: false },
-                                    scrollBeyondLastLine: false,
-                                    automaticLayout: true,
-                                    padding: { top: 20 },
-                                    cursorSmoothCaretAnimation: "on",
-                                    smoothScrolling: true,
-                                    lineNumbersMinChars: 3,
-                                }}
-                            />
+                                    <h4 className="text-white font-black uppercase tracking-tight mb-2">IDE Policy Restriction</h4>
+                                    <p className="text-slate-500 text-xs font-medium max-w-xs leading-relaxed mb-6">
+                                        Your browser blocked the professional editor due to security policies. Please use the fallback editor below.
+                                    </p>
+                                    <textarea 
+                                        value={code}
+                                        onChange={(e) => setCode(e.target.value)}
+                                        className="w-full flex-1 bg-slate-900 border border-white/5 rounded-xl p-4 text-white font-mono text-sm outline-none focus:border-primary/30"
+                                        placeholder="Enter your code here..."
+                                    />
+                                </div>
+                            ) : (
+                                <Editor
+                                    height="100%"
+                                    language={selectedLang.monaco}
+                                    theme="vs-dark"
+                                    value={code}
+                                    onMount={() => setIsEditorReady(true)}
+                                    loading={
+                                        <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-950">
+                                            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] animate-pulse">Initializing IDE...</p>
+                                        </div>
+                                    }
+                                    onChange={(value) => setCode(value || "")}
+                                    options={{
+                                        fontSize: 14,
+                                        fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
+                                        minimap: { enabled: false },
+                                        scrollBeyondLastLine: false,
+                                        automaticLayout: true,
+                                        padding: { top: 20 },
+                                        cursorSmoothCaretAnimation: "on",
+                                        smoothScrolling: true,
+                                        lineNumbersMinChars: 3,
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
