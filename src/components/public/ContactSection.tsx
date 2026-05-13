@@ -200,35 +200,32 @@ export default function ContactSection({ data, blocks }: { data?: any, blocks?: 
 
                 {/* Dynamic Google Map Section */}
                 <div className="mt-20 bg-white p-4 md:p-6 rounded-[3rem] shadow-xl border border-slate-100 relative overflow-hidden group">
-                    <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden">
+                    <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden bg-slate-100 relative">
                         {(() => {
                             let cleanUrl = extra?.map_url || "";
-                            if (cleanUrl.includes("<iframe") && cleanUrl.includes("src=")) {
+                            
+                            // 1. If it's an iframe tag, extract the src
+                            if (cleanUrl.includes("<iframe")) {
                                 const match = cleanUrl.match(/src="([^"]+)"/);
                                 if (match && match[1]) cleanUrl = match[1];
                             }
                             
-                            // Check if it's a valid embed URL. If it's a normal maps.google.com link WITHOUT /embed, 
-                            // it will be blocked by X-Frame-Options.
-                            const isEmbeddable = cleanUrl && !cleanUrl.includes('goo.gl') && (cleanUrl.includes('/embed') || !cleanUrl.includes('google.com/maps/'));
+                            // 2. If it's a standard Google Maps URL but not an embed URL, try to convert or use fallback
+                            // Embed URLs must contain /embed or be from the embed API
+                            const isGoogleMaps = cleanUrl.includes("google.com/maps");
+                            const isEmbedUrl = cleanUrl.includes("/embed") || cleanUrl.includes("pb=");
                             
-                            if (isEmbeddable) {
-                                return (
-                                    <iframe
-                                        src={cleanUrl}
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen={true}
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                        className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700"
-                                    ></iframe>
-                                );
-                            }
+                            // If it's a Google Maps link but NOT an embed link, it will be blocked by Google
+                            const isBlockedByPolicy = isGoogleMaps && !isEmbedUrl;
+                            const isShortLink = cleanUrl.includes("goo.gl");
+
+                            const finalUrl = (cleanUrl && !isBlockedByPolicy && !isShortLink) 
+                                ? cleanUrl 
+                                : "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.5762928460044!2d81.87340689999999!3d25.48582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399ab531fe1e89e1%3A0xc96ab59adb557ac0!2sNational%20Genius%20Institute!5e0!3m2!1sen!2sin!4v1778533252331!5m2!1sen!2sin";
+                            
                             return (
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3601.5762928460044!2d81.87340689999999!3d25.48582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399ab531fe1e89e1%3A0xc96ab59adb557ac0!2sNational%20Genius%20Institute!5e0!3m2!1sen!2sin!4v1778533252331!5m2!1sen!2sin"
+                                    src={finalUrl}
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}
