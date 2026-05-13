@@ -1,5 +1,6 @@
 import CodeCompiler from "@/components/public/tools/CodeCompiler";
 import { Sparkles } from "lucide-react";
+import Head from "next/head";
 
 export const metadata = {
     title: "Online Code Compiler | NGI Study Zone",
@@ -9,6 +10,9 @@ export const metadata = {
 export default function CodeCompilerPage() {
     return (
         <div className="min-h-screen bg-white pt-40 pb-20">
+            <Head>
+                <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';" />
+            </Head>
             <div className="container mx-auto px-6">
                 {/* Header Section */}
                 <div className="max-w-4xl mx-auto text-center mb-16 space-y-6">

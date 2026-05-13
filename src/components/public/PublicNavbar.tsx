@@ -52,7 +52,7 @@ export default function PublicNavbar() {
         };
     }, []);
 
-    const rawNavLinks: NavLink[] = headerData?.navigation || [
+    const navLinks: NavLink[] = headerData?.navigation || [
         { label: "Home", href: "/" },
         { label: "Courses", href: "/student/login" },
         { label: "Mock Tests", href: "/student/login" },
@@ -63,11 +63,6 @@ export default function PublicNavbar() {
         { label: "About", href: "/#about" },
         { label: "Contact", href: "/contact" },
     ];
-
-    // Ensure "Tools" is always present for students
-    const navLinks = rawNavLinks.some(link => link.label === "Tools") 
-        ? rawNavLinks 
-        : [...rawNavLinks.slice(0, 3), { label: "Tools", href: "/tools" }, ...rawNavLinks.slice(3)];
 
     return (
         <nav className={cn(
