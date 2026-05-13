@@ -3,35 +3,34 @@ import { getFaculty } from "@/app/actions/faculty";
 import DynamicRenderer from "@/components/public/DynamicRenderer";
 import FacultySection from "@/components/public/FacultySection";
 import DirectorMessageSection from "@/components/public/DirectorMessageSection";
-import { Quote } from "lucide-react";
-import Image from "next/image";
+import { getCMSContent } from "@/services/CMSService";
 
 export default async function PublicFacultyPage() {
-    const [dynamicData, facultyRes] = await Promise.all([
+    const [dynamicData, facultyRes, directorInfo] = await Promise.all([
         getDynamicPageData("faculty"),
-        getFaculty()
+        getFaculty(),
+        getCMSContent("DIRECTOR_INFO")
     ]);
 
     const facultyMembers = facultyRes.success ? facultyRes.faculty : [];
     
-    const director = facultyMembers.find((f: any) => 
-        f.position?.toLowerCase().includes("director") || 
-        f.position?.toLowerCase().includes("md") ||
-        f.name?.toLowerCase().includes("javed")
-    ) || facultyMembers[0];
+    // Use the dedicated CMS info for director/chairman, or fallback to first faculty ONLY if absolutely necessary
+    const director = directorInfo || facultyMembers[0];
 
     const staticFallbackContent = facultyMembers.length > 0 ? (
-        <div className="min-h-screen bg-white pt-24 pb-24">
+        <div className="min-h-screen bg-white pt-40 pb-24">
             <div className="container mx-auto">
                 <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-20 text-center tracking-tighter">
                     Leadership & <span className="text-primary italic font-serif">Faculty</span>
                 </h1>
 
                 {/* Director's Message Section Component */}
-                <DirectorMessageSection 
-                    director={director} 
-                    data={{ bg_color: "bg-primary rounded-[4rem] mb-32 shadow-xl shadow-primary/20" }} 
-                />
+                {director && (
+                    <DirectorMessageSection 
+                        director={director} 
+                        data={{ bg_color: "bg-primary rounded-[4rem] mb-32 shadow-xl shadow-primary/20" }} 
+                    />
+                )}
 
                 {/* Full Faculty List */}
                 <div className="pt-20">
@@ -51,7 +50,10 @@ export default async function PublicFacultyPage() {
         <div className="min-h-screen">
             <DynamicRenderer 
                 sections={cmsSections} 
-                extraData={{ faculty: facultyMembers }}
+                extraData={{ 
+                    faculty: facultyMembers,
+                    director: directorInfo
+                }}
                 staticFallback={staticFallbackContent} 
             />
         </div>

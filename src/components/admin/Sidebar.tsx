@@ -37,6 +37,7 @@ const menuGroups = [
             { label: "Courses & LMS", href: "/admin/courses", icon: Shapes },
             { label: "Study Materials", href: "/admin/materials", icon: Library },
             { label: "Faculty & Staff", href: "/admin/faculty", icon: GraduationCap },
+            { label: "Chairman Msg", href: "/admin/content/director", icon: FileText },
         ]
     },
     {
@@ -89,7 +90,6 @@ const menuGroups = [
                     { label: "Website Overview", href: "/admin/content" },
                     { label: "Homepage Builder", href: "/admin/content/home-builder" },
                     { label: "All Pages", href: "/admin/content/pages" },
-                    { label: "Leadership Profile", href: "/admin/content/director" },
                     { label: "About Us", href: "/admin/content/about" },
                     { label: "SEO Settings", href: "/admin/content/seo" },
                     { label: "Forms & Leads", href: "/admin/content/forms" },

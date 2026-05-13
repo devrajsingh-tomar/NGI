@@ -177,12 +177,12 @@ export default function FacultySection({ members, data }: { members?: any[], dat
 
             {/* Modal / Dialog for Classic View */}
             <Dialog open={!!selectedFaculty} onOpenChange={(open) => !open && setSelectedFaculty(null)}>
-                <DialogContent className="max-w-4xl p-0 overflow-hidden bg-white rounded-[2rem] border-none shadow-[0_0_100px_rgba(0,0,0,0.3)]">
+                <DialogContent className="max-w-4xl p-0 overflow-hidden bg-white rounded-[2rem] border-none shadow-[0_0_100px_rgba(0,0,0,0.3)] max-h-[95vh] flex flex-col md:block">
                     <DialogTitle className="sr-only">Faculty Profile: {selectedFaculty?.name}</DialogTitle>
                     {selectedFaculty && (
-                        <div className="grid md:grid-cols-5 h-full md:h-[500px]">
+                        <div className="grid md:grid-cols-5 h-full min-h-0">
                             {/* Left Side: Portrait */}
-                            <div className="md:col-span-2 relative h-72 md:h-full bg-slate-900">
+                            <div className="md:col-span-2 relative h-64 md:h-[600px] bg-slate-900 shrink-0">
                                 {selectedFaculty.image ? (
                                     <img src={selectedFaculty.image} alt={selectedFaculty.name} className="absolute inset-0 w-full h-full object-cover" />
                                 ) : (
@@ -194,47 +194,57 @@ export default function FacultySection({ members, data }: { members?: any[], dat
                             </div>
 
                             {/* Right Side: Details Matrix */}
-                            <div className="md:col-span-3 p-8 md:p-12 bg-[#FAFAF9] flex flex-col overflow-y-auto">
-                                <div className="mb-8 pb-8 border-b border-slate-200/60">
-                                    <h2 className="text-4xl font-black text-slate-900 font-serif mb-2">{selectedFaculty.name}</h2>
+                            <div className="md:col-span-3 p-8 md:p-12 bg-[#FAFAF9] flex flex-col justify-center overflow-y-auto">
+                                <div className="mb-6 pb-6 border-b border-slate-200/60">
+                                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 font-serif mb-3 leading-tight">{selectedFaculty.name}</h2>
                                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-black uppercase tracking-widest text-[10px]">
                                         <Zap className="w-3 h-3" /> {selectedFaculty.subject}
                                     </div>
                                 </div>
 
-                                <div className="space-y-6 flex-1">
-                                    <p className="text-slate-600 leading-relaxed font-medium text-lg italic">
-                                        "{selectedFaculty.bio || selectedFaculty.shortBio}"
-                                    </p>
+                                <div className="space-y-6">
+                                    {selectedFaculty.bio && selectedFaculty.bio !== "N/A" && (
+                                        <p className="text-slate-600 leading-relaxed font-medium text-lg italic border-l-4 border-primary/20 pl-4">
+                                            "{selectedFaculty.bio}"
+                                        </p>
+                                    )}
 
-                                    <div className="grid sm:grid-cols-2 gap-6 pt-6">
-                                        <div className="flex gap-4 items-start">
-                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
-                                                <GraduationCap className="w-5 h-5" />
+                                    <div className="grid sm:grid-cols-2 gap-6 pt-2">
+                                        {selectedFaculty.qualification && selectedFaculty.qualification !== "N/A" && (
+                                            <div className="flex gap-4 items-start">
+                                                <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
+                                                    <GraduationCap className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Qualification</p>
+                                                    <p className="font-bold text-slate-800">{selectedFaculty.qualification}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Qualification</p>
-                                                <p className="font-bold text-slate-800">{selectedFaculty.qualification}</p>
+                                        )}
+                                        
+                                        {selectedFaculty.experience && selectedFaculty.experience !== "N/A" && (
+                                            <div className="flex gap-4 items-start">
+                                                <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
+                                                    <Award className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Experience</p>
+                                                    <p className="font-bold text-slate-800">{selectedFaculty.experience}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex gap-4 items-start">
-                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
-                                                <Award className="w-5 h-5" />
+                                        )}
+
+                                        {selectedFaculty.specialization && selectedFaculty.specialization !== "N/A" && (
+                                            <div className="sm:col-span-2 flex gap-4 items-start">
+                                                <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
+                                                    <BookOpen className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Core Specialization</p>
+                                                    <p className="font-bold text-slate-800">{selectedFaculty.specialization}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Experience</p>
-                                                <p className="font-bold text-slate-800">{selectedFaculty.experience}</p>
-                                            </div>
-                                        </div>
-                                        <div className="sm:col-span-2 flex gap-4 items-start">
-                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary shrink-0">
-                                                <BookOpen className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Core Specialization</p>
-                                                <p className="font-bold text-slate-800">{selectedFaculty.specialization}</p>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
