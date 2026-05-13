@@ -69,6 +69,10 @@ const nextConfig = {
                         key: "Permissions-Policy",
                         value: "camera=(self), microphone=(), geolocation=(self), interest-cohort=()",
                     },
+                    {
+                        key: "Content-Security-Policy",
+                        value: "frame-src 'self' https://www.google.com https://www.youtube.com https://*.google.com;",
+                    },
                 ],
             },
         ];
