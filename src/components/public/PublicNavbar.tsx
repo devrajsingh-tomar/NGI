@@ -54,15 +54,14 @@ export default function PublicNavbar() {
 
     const navLinks: NavLink[] = headerData?.navigation || [
         { label: "Home", href: "/" },
-        { label: "About", href: "/#about" },
         { label: "Courses", href: "/student/login" },
-        { label: "Blog", href: "/blog" },
         { label: "Mock Tests", href: "/student/login" },
-
-        { label: "ShortHand", href: "/student/login" },
+        { label: "Tools", href: "/tools/compiler" },
         { label: "Results", href: "/results" },
         { label: "Gallery", href: "/gallery" },
         { label: "Faculty", href: "/faculty" },
+        { label: "Blog", href: "/blog" },
+        { label: "About", href: "/#about" },
         { label: "Contact", href: "/contact" },
     ];
 
