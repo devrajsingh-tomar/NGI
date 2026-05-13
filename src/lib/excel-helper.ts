@@ -132,16 +132,28 @@ function transformRowToQuestion(row: any, rowNumber: number) {
     case "MATCH_THE_FOLLOWING": {
       if (!row.match_pairs) throw new Error("MATCH requires match_pairs JSON");
       base.type = "MATCH_THE_FOLLOWING";
+      
+      // 1. Process the items to match (The Matrix)
       try {
         const pairs = typeof row.match_pairs === 'string' ? JSON.parse(row.match_pairs) : row.match_pairs;
-        // Map pairs to options
-        base.options = Object.entries(pairs).map(([key, val]) => ({
-          text: { en: key },
-          pair: { en: val.toString() },
-          isCorrect: true
+        base.matchMatrix = Object.entries(pairs).map(([key, val]) => ({
+          left: { en: key },
+          right: { en: val.toString() }
         }));
       } catch (e) {
-        throw new Error("Invalid match_pairs JSON format");
+        throw new Error("Invalid match_pairs JSON format. Expected: {\"Item1\":\"Match1\", \"Item2\":\"Match2\"}");
+      }
+
+      // 2. Process the selectable options (The Sequences A, B, C, D)
+      if (row.optionA && row.optionB) {
+        base.options = [
+          { text: { en: row.optionA }, isCorrect: row.correctAnswer === "A" },
+          { text: { en: row.optionB }, isCorrect: row.correctAnswer === "B" },
+          { text: { en: row.optionC || "" }, isCorrect: row.correctAnswer === "C" },
+          { text: { en: row.optionD || "" }, isCorrect: row.correctAnswer === "D" },
+        ].filter(o => o.text.en);
+      } else {
+        throw new Error("MATCH requires selectable options A, B, C, D (Sequences)");
       }
       break;
     }
@@ -151,9 +163,20 @@ function transformRowToQuestion(row: any, rowNumber: number) {
       base.type = "ASSERTION_REASON";
       base.assertion = { en: row.assertion };
       base.reason = { en: row.reason };
-      // Map A=0, B=1, C=2, D=3
-      const answerMap: any = { "A": 0, "B": 1, "C": 2, "D": 3 };
-      base.numericAnswer = answerMap[row.correctAnswer] !== undefined ? answerMap[row.correctAnswer] : 0;
+      
+      // If custom options are provided, use them. Otherwise, default logic applies in UI.
+      if (row.optionA && row.optionB) {
+        base.options = [
+          { text: { en: row.optionA }, isCorrect: row.correctAnswer === "A" },
+          { text: { en: row.optionB }, isCorrect: row.correctAnswer === "B" },
+          { text: { en: row.optionC || "" }, isCorrect: row.correctAnswer === "C" },
+          { text: { en: row.optionD || "" }, isCorrect: row.correctAnswer === "D" },
+        ].filter(o => o.text.en);
+      } else {
+        // Fallback to numeric mapping if no custom options
+        const answerMap: any = { "A": 1, "B": 2, "C": 3, "D": 4 };
+        base.numericAnswer = answerMap[row.correctAnswer] !== undefined ? answerMap[row.correctAnswer] : 1;
+      }
       break;
     }
 
@@ -200,9 +223,9 @@ export async function generateSampleTemplate() {
   worksheet.addRow(["General", "TRUE_FALSE", "Is HTML a programming language?", "", "True", "False", "", "", "B", "EASY", "en"]);
   worksheet.addRow(["Maths", "NUMERIC", "5 + 5 = ?", "", "", "", "", "", "10", "EASY", "en"]);
   worksheet.addRow(["English", "SHORT", "Synonym of 'Happy'", "", "", "", "", "", "Joyful", "MEDIUM", "en"]);
-  worksheet.addRow(["O Level", "MATCH", "Match Hardware", "", "", "", "", "", "", "HARD", "en", "", '{"Mouse":"Input", "Monitor":"Output"}']);
-  worksheet.addRow(["Science", "ASSERTION_REASON", "Assertion content", "", "", "", "", "", "A", "MEDIUM", "en", "", "", "Water is liquid", "It has hydrogen"]);
-  worksheet.addRow(["Typing", "TYPING", "Type this paragraph", "", "", "", "", "", "", "MEDIUM", "en", "", "", "", "", "The quick brown fox jumps over the lazy dog."]);
+  worksheet.addRow(["O Level", "MATCH", "Match the following hardware components with their types.", "", "1-x, 2-y, 3-z, 4-w", "1-y, 2-x, 3-w, 4-z", "1-z, 2-w, 3-y, 4-x", "1-w, 2-z, 3-x, 4-y", "A", "HARD", "en", "Match correctly", '{"Mouse":"Input", "Monitor":"Output", "Keyboard":"Input", "Printer":"Output"}']);
+  worksheet.addRow(["Science", "ASSERTION_REASON", "Analyze the following statement and its reason.", "", "", "", "", "", "A", "MEDIUM", "en", "Water is liquid at room temp.", "", "Water is liquid", "It has strong hydrogen bonding"]);
+  worksheet.addRow(["Typing", "TYPING", "Type the following paragraph as accurately as possible.", "", "", "", "", "", "", "MEDIUM", "en", "", "", "", "", "The quick brown fox jumps over the lazy dog. Programming is the art of telling another human what one wants the computer to do."]);
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;

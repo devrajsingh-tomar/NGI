@@ -24,16 +24,10 @@ export default function ImportQuestionsPage() {
     const [file, setFile] = useState<File | null>(null);
     const [previewData, setPreviewData] = useState<any[]>([]);
     const [importing, setImporting] = useState(false);
-    const [selectedCourseId, setSelectedCourseId] = useState("");
 
     useEffect(() => {
-        loadCourses();
+        // No longer loading courses as courseId is optional
     }, []);
-
-    const loadCourses = async () => {
-        const res = await getAllCourses(); // Fixed from getCourses to getAllCourses based on recent audit
-        if (res.success) setCourses(res.courses);
-    };
 
     const excelToJson = async (file: File) => {
         try {
@@ -112,7 +106,7 @@ export default function ImportQuestionsPage() {
 
         try {
             const data = await excelToJson(selectedFile);
-            setPreviewData(data.slice(0, 5));
+            setPreviewData(data); // Show all data for review
         } catch (err: any) {
             toast.error(err.message);
             setFile(null);
@@ -121,10 +115,6 @@ export default function ImportQuestionsPage() {
     };
 
     const handleImport = async () => {
-        if (!selectedCourseId) {
-            toast.error("Please select a target course for these questions.");
-            return;
-        }
         if (!file) {
             toast.error("Please upload an Excel file.");
             return;
@@ -168,7 +158,7 @@ export default function ImportQuestionsPage() {
                 const questType = mapType(typeRaw?.toString());
 
                 return {
-                    courseId: selectedCourseId,
+                    courseId: undefined, // Optional now
                     examCode: finalExamCode,
                     subject: subject || "General",
                     topic: topic || "Uncategorized",
@@ -389,20 +379,9 @@ export default function ImportQuestionsPage() {
                 </div>
 
                 <div className="space-y-6 max-w-md mx-auto">
-                    <div className="space-y-2">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest pl-2">1. Target Course</label>
-                        <select 
-                            className="w-full h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-900 outline-none focus:ring-2 focus:ring-primary/20 appearance-none"
-                            value={selectedCourseId}
-                            onChange={(e) => setSelectedCourseId(e.target.value)}
-                        >
-                            <option value="">Choose a Course</option>
-                            {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
-                        </select>
-                    </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest pl-2">2. Select File</label>
+                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest pl-2">1. Select File</label>
                         <div className="relative h-40 group cursor-pointer">
                             <input 
                                 type="file" 
@@ -431,7 +410,7 @@ export default function ImportQuestionsPage() {
 
                     <Button 
                         className="w-full h-16 rounded-[1.5rem] font-black text-lg gap-3 mt-4 shadow-2xl shadow-primary/20"
-                        disabled={!file || !selectedCourseId || importing}
+                        disabled={!file || importing}
                         onClick={handleImport}
                     >
                         {importing ? (
@@ -449,25 +428,39 @@ export default function ImportQuestionsPage() {
                 {previewData.length > 0 && (
                     <div className="pt-10 border-t border-slate-50">
                         <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-widest mb-6 italic flex items-center justify-center gap-2">
-                            <AlertCircle className="w-3 h-3" /> Previewing first few records
+                            <AlertCircle className="w-3 h-3" /> Previewing all records from sheet
                         </p>
-                        <div className="overflow-hidden rounded-2xl border border-slate-100">
+                        <div className="overflow-hidden rounded-2xl border border-slate-100 max-h-[500px] overflow-y-auto no-scrollbar">
                             <table className="w-full text-xs">
-                                <thead className="bg-slate-50 text-slate-400 font-black uppercase">
+                                <thead className="bg-slate-50 text-slate-400 font-black uppercase sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th className="px-4 py-3 text-left">Type</th>
-                                        <th className="px-4 py-3 text-left">Question Snippet</th>
-                                        <th className="px-4 py-3 text-center">Correct</th>
+                                        <th className="px-4 py-3 text-left">TYPE</th>
+                                        <th className="px-4 py-3 text-left">QUESTION SNIPPET</th>
+                                        <th className="px-4 py-3 text-center">CORRECT</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {previewData.map((row, i) => (
-                                        <tr key={i} className="border-t border-slate-50">
-                                            <td className="px-4 py-3 font-bold text-primary">{row.Type || "MCQ"}</td>
-                                            <td className="px-4 py-3 text-slate-600 font-medium truncate max-w-xs">{row.Question || row.Content}</td>
-                                            <td className="px-4 py-3 text-center font-black text-emerald-500">{row.CorrectAnswer || "A"}</td>
-                                        </tr>
-                                    ))}
+                                    {previewData.map((row, i) => {
+                                        const type = getValueCaseInsensitive(row, ["Type", "QuestionType", "QType"]) || "MCQ";
+                                        const snippet = getValueCaseInsensitive(row, ["Question", "Content", "Q", "question_en"]) || "";
+                                        const correct = getValueCaseInsensitive(row, ["CorrectAnswer", "Correct Answer", "Answer", "correctAnswer"]) || "A";
+                                        
+                                        return (
+                                            <tr key={i} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-4 py-3">
+                                                    <span className="px-2 py-1 rounded-md bg-amber-50 text-amber-600 font-black text-[10px] uppercase">
+                                                        {type}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-slate-600 font-medium truncate max-w-xs">{snippet}</td>
+                                                <td className="px-4 py-3 text-center">
+                                                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto font-black shadow-sm">
+                                                        {correct}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
