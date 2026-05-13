@@ -184,15 +184,19 @@ export default function FacultySection({ members, data, showAll = false }: { mem
                     {selectedFaculty && (
                         <div className="grid md:grid-cols-5 h-full min-h-0">
                             {/* Left Side: Portrait */}
-                            <div className="md:col-span-2 relative h-64 md:h-[600px] bg-slate-900 shrink-0">
+                            <div className="md:col-span-2 relative h-80 sm:h-96 md:h-[600px] bg-slate-900 shrink-0">
                                 {selectedFaculty.image ? (
-                                    <img src={selectedFaculty.image} alt={selectedFaculty.name} className="absolute inset-0 w-full h-full object-cover" />
+                                    <img 
+                                        src={selectedFaculty.image} 
+                                        alt={selectedFaculty.name} 
+                                        className="absolute inset-0 w-full h-full object-cover object-top" 
+                                    />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <User className="w-32 h-32 text-slate-700" />
                                     </div>
                                 )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80 md:hidden" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 md:hidden" />
                             </div>
 
                             {/* Right Side: Details Matrix */}
