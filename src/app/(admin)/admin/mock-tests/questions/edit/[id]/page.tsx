@@ -57,6 +57,7 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
         shortAnswer: "",
         assertion: { en: "" },
         reason: { en: "" },
+        matchMatrix: [{ left: { en: "" }, right: { en: "" } }],
     });
 
     useEffect(() => {
@@ -87,7 +88,7 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
         if (field === "text") {
             newOptions[index].text.en = value;
         } else if (field === "isCorrect") {
-            if (formData.type === "MCQ_SINGLE") {
+            if (["MCQ_SINGLE", "MATCH_THE_FOLLOWING", "ASSERTION_REASON"].includes(formData.type)) {
                 newOptions.forEach((opt, i) => opt.isCorrect = i === index);
             } else {
                 newOptions[index].isCorrect = value;
@@ -97,6 +98,25 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
             newOptions[index].pair.en = value;
         }
         setFormData({ ...formData, options: newOptions });
+    };
+
+    const handleMatrixChange = (index: number, field: "left" | "right", value: string) => {
+        const newMatrix = [...(formData.matchMatrix || [])];
+        if (!newMatrix[index]) newMatrix[index] = { left: { en: "" }, right: { en: "" } };
+        newMatrix[index][field].en = value;
+        setFormData({ ...formData, matchMatrix: newMatrix });
+    };
+
+    const addMatrixPair = () => {
+        setFormData({
+            ...formData,
+            matchMatrix: [...(formData.matchMatrix || []), { left: { en: "" }, right: { en: "" } }]
+        });
+    };
+
+    const removeMatrixPair = (index: number) => {
+        const newMatrix = formData.matchMatrix.filter((_: any, i: number) => i !== index);
+        setFormData({ ...formData, matchMatrix: newMatrix });
     };
 
     const addOption = () => {
@@ -236,7 +256,7 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
                 {/* 4. DYNAMIC AREA */}
                 <div className="bg-slate-50/50 -mx-8 px-8 py-8 border-y border-slate-50 space-y-4">
                     
-                    {["MCQ_SINGLE", "MCQ_MULTIPLE"].includes(formData.type) && (
+                    {["MCQ_SINGLE", "MCQ_MULTIPLE", "MATCH_THE_FOLLOWING", "ASSERTION_REASON"].includes(formData.type) && (
                         <div className="space-y-4">
                             <div className="flex items-center justify-between mb-4">
                                 <div>
@@ -259,12 +279,15 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <Input 
-                                            placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                                            className="bg-transparent border-none text-slate-800 font-bold px-2 shadow-none focus-visible:ring-0 text-base"
-                                            value={opt.text.en}
-                                            onChange={(e) => handleOptionChange(i, "text", e.target.value)}
-                                        />
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shrink-0">{String.fromCharCode(65 + i)}</div>
+                                            <Input 
+                                                placeholder={`Option Content...`}
+                                                className="bg-transparent border-none text-slate-800 font-bold px-2 shadow-none focus-visible:ring-0 text-base"
+                                                value={opt.text.en}
+                                                onChange={(e) => handleOptionChange(i, "text", e.target.value)}
+                                            />
+                                        </div>
                                     </div>
                                     {formData.options.length > 2 && (
                                         <Button variant="ghost" size="icon" className="mt-1 hover:bg-rose-100 hover:text-rose-600 text-slate-400 rounded-xl" onClick={() => removeOption(i)}>
@@ -337,33 +360,50 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
                     )}
 
                     {formData.type === "MATCH_THE_FOLLOWING" && (
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <Label className="font-bold text-slate-700 text-lg">Match Matrix</Label>
-                                <Button variant="outline" className="h-10 gap-2 uppercase font-black text-[10px] rounded-xl bg-white" onClick={addOption}>
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
+                                <div>
+                                    <Label className="font-bold text-slate-700 text-lg">Match Matrix</Label>
+                                    <p className="text-sm font-medium text-slate-500">Define the items and their correct matches</p>
+                                </div>
+                                <Button variant="outline" className="h-10 gap-2 uppercase font-black text-[10px] rounded-xl bg-white" onClick={addMatrixPair}>
                                     <Plus className="w-3 h-3" /> Add Pair
                                 </Button>
                             </div>
-                            {formData.options.map((opt: any, i: number) => (
-                                <div key={i} className="flex gap-4 items-center bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
-                                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shrink-0">{i+1}</div>
-                                    <Input 
-                                        placeholder={`Item ${i+1}`}
-                                        className="flex-1 h-12 rounded-xl bg-slate-50 border-none font-bold"
-                                        value={opt.text.en}
-                                        onChange={(e) => handleOptionChange(i, "text", e.target.value)}
-                                    />
-                                    <Input 
-                                        placeholder={`Match ${i+1}`}
-                                        className="flex-1 h-12 rounded-xl bg-slate-50 border-none font-bold text-indigo-700"
-                                        value={opt.pair?.en}
-                                        onChange={(e) => handleOptionChange(i, "pair", e.target.value)}
-                                    />
-                                    <Button variant="ghost" size="icon" className="hover:bg-rose-100 hover:text-rose-600 text-slate-400 rounded-xl" onClick={() => removeOption(i)}>
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                            ))}
+                            <div className="space-y-3">
+                                {(formData.matchMatrix || []).map((pair: any, i: number) => (
+                                    <div key={i} className="flex gap-4 items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-primary/20">
+                                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-xs shrink-0">{i+1}</div>
+                                        <div className="flex-1 space-y-1">
+                                            <Label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Column I</Label>
+                                            <Input 
+                                                placeholder={`Item ${i+1}`}
+                                                className="h-12 rounded-xl bg-slate-50 border-none font-bold"
+                                                value={pair.left?.en || ""}
+                                                onChange={(e) => handleMatrixChange(i, "left", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="flex-1 space-y-1">
+                                            <Label className="text-[9px] font-black uppercase tracking-widest ml-1 text-indigo-500">Column II</Label>
+                                            <Input 
+                                                placeholder={`Match ${i+1}`}
+                                                className="h-12 rounded-xl bg-slate-50 border-none font-bold text-indigo-700"
+                                                value={pair.right?.en || ""}
+                                                onChange={(e) => handleMatrixChange(i, "right", e.target.value)}
+                                            />
+                                        </div>
+                                        <Button variant="ghost" size="icon" className="mt-5 hover:bg-rose-100 hover:text-rose-600 text-slate-400 rounded-xl" onClick={() => removeMatrixPair(i)}>
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex gap-3 items-start">
+                                <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                                <p className="text-[11px] font-medium text-amber-800 leading-relaxed">
+                                    The matrix above defines the question display. Use the <b>Options</b> section below to provide the multiple-choice sequences (e.g. A: 1-i, 2-ii) that students will select from.
+                                </p>
+                            </div>
                         </div>
                     )}
 
@@ -387,28 +427,33 @@ export default function EditQuestionPage({ params }: { params: Promise<{ id: str
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-3">
-                                <Label className="font-bold text-slate-700 ml-1">Correct Outcome</Label>
-                                <div className="space-y-2">
-                                    {[
-                                        "A: Both are true, R is the correct explanation",
-                                        "B: Both are true, R is NOT the correct explanation",
-                                        "C: A is true, but R is false",
-                                        "D: A is false, but R is true"
-                                    ].map((opt, i) => (
-                                        <div 
-                                            key={i}
-                                            onClick={() => setFormData({...formData, numericAnswer: i})}
-                                            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all font-bold text-sm flex items-center gap-3 ${
-                                                Number(formData.numericAnswer) === i ? "border-emerald-500 bg-emerald-50" : "border-slate-100 bg-white"
-                                            }`}
-                                        >
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${Number(formData.numericAnswer) === i ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`} />
-                                            {opt}
-                                        </div>
-                                    ))}
+                            {(!formData.options || formData.options.length === 0 || formData.options.every((o: any) => !o.text.en)) && (
+                                <div className="space-y-3">
+                                    <Label className="font-bold text-slate-700 ml-1">Default Logical Outcomes</Label>
+                                    <div className="space-y-2">
+                                        {[
+                                            "A: Both are true, R is the correct explanation",
+                                            "B: Both are true, R is NOT the correct explanation",
+                                            "C: A is true, but R is false",
+                                            "D: A is false, but R is true"
+                                        ].map((opt, i) => (
+                                            <div 
+                                                key={i}
+                                                onClick={() => setFormData({...formData, numericAnswer: i})}
+                                                className={`p-4 rounded-2xl border-2 cursor-pointer transition-all font-bold text-sm flex items-center gap-3 ${
+                                                    Number(formData.numericAnswer) === i ? "border-emerald-500 bg-emerald-50" : "border-slate-100 bg-white"
+                                                }`}
+                                            >
+                                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${Number(formData.numericAnswer) === i ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`} />
+                                                {opt}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-2">
+                                        Note: Add custom "Options" above to override these defaults.
+                                    </p>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )}
 

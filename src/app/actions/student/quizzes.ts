@@ -91,7 +91,8 @@ export const getQuiz = createSafeAction(
                 type: q.type,
                 assertion: q.assertion,
                 reason: q.reason,
-                shortAnswer: q.shortAnswer
+                shortAnswer: q.shortAnswer,
+                matchMatrix: q.matchMatrix
             };
         }).filter(Boolean);
 
@@ -147,7 +148,7 @@ export const submitQuiz = createSafeAction(
             if (userAnswer === undefined || userAnswer === null || (Array.isArray(userAnswer) && userAnswer.length === 0)) {
                 unattemptedCount++;
             } else {
-                if (question.type === "MCQ_SINGLE") {
+                if (["MCQ_SINGLE", "MATCH_THE_FOLLOWING"].includes(question.type)) {
                     const correctOption = question.options.find((o: any) => o.isCorrect);
                     isCorrect = correctOption?._id.toString() === userAnswer;
                 } else if (question.type === "MCQ_MULTIPLE") {
@@ -163,11 +164,6 @@ export const submitQuiz = createSafeAction(
                     isCorrect = String(userAnswer) === String(isCorrectVal);
                 } else if (question.type === "ASSERTION_REASON") {
                     isCorrect = parseInt(userAnswer) === question.numericAnswer;
-                } else if (question.type === "MATCH_THE_FOLLOWING") {
-                    const matches = Object.entries(userAnswer as Record<string, string>);
-                    if (matches.length === question.options.length) {
-                        isCorrect = matches.every(([optId, matchId]) => optId === matchId);
-                    }
                 } else if (question.type === "TYPING") {
                     const originalText = question.shortAnswer || question.content.en || "";
                     const typedText = typeof userAnswer === "string" ? userAnswer : "";

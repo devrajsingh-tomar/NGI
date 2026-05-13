@@ -26,6 +26,10 @@ export interface Question {
   }[];
   assertion?: { en: string; hi?: string };
   reason?: { en: string; hi?: string };
+  matchMatrix?: {
+    left: { en: string; hi?: string };
+    right: { en: string; hi?: string };
+  }[];
   shortAnswer?: string;
   numericAnswer?: number;
   // Typing specific

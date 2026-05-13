@@ -39,6 +39,10 @@ export interface IQuestion extends Document {
     shortAnswer?: string; // For Short Answer
     assertion?: { en: string; hi?: string }; // For Assertion Reason
     reason?: { en: string; hi?: string };    // For Assertion Reason
+    matchMatrix?: {
+        left: { en: string; hi?: string };
+        right: { en: string; hi?: string };
+    }[];
     marks: number;
     negativeMarks: number;
     explanation?: {
@@ -94,6 +98,18 @@ const QuestionSchema = new Schema<IQuestion>(
             en: { type: String },
             hi: { type: String },
         },
+        matchMatrix: [
+            {
+                left: {
+                    en: { type: String },
+                    hi: { type: String },
+                },
+                right: {
+                    en: { type: String },
+                    hi: { type: String },
+                }
+            }
+        ],
         marks: { type: Number, default: 4 },
         negativeMarks: { type: Number, default: 1 },
         explanation: {

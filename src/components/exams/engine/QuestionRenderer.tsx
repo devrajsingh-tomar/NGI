@@ -33,8 +33,13 @@ export default function QuestionRenderer({
   ];
 
   // Helper to get number of options
-  const displayOptions = (question.type === "ASSERTION_REASON" && (!question.options || question.options.length === 0))
-    ? DEFAULT_AR_OPTIONS.map((opt, i) => ({ text: opt }))
+  const hasCustomOptions = question.type === "ASSERTION_REASON" && 
+                          question.options && 
+                          question.options.length > 0 && 
+                          question.options.some(o => o.text?.en);
+
+  const displayOptions = (question.type === "ASSERTION_REASON" && !hasCustomOptions)
+    ? DEFAULT_AR_OPTIONS.map((opt, i) => ({ text: opt, _id: (i + 1).toString() }))
     : (question.options || []);
 
   const optionCount = displayOptions.length;
@@ -54,13 +59,14 @@ export default function QuestionRenderer({
   };
 
   const isChecked = (choice: string, optionId?: string, index?: number) => {
+    if (!value) return false;
     if (question.type === "MCQ_MULTIPLE") {
       return Array.isArray(value) && value.includes(optionId);
     }
-    if (question.type === "ASSERTION_REASON") {
+    if (question.type === "ASSERTION_REASON" && !hasCustomOptions) {
       return value === (index! + 1).toString();
     }
-    if (["MCQ_SINGLE", "MATCH_THE_FOLLOWING"].includes(question.type)) {
+    if (["MCQ_SINGLE", "MATCH_THE_FOLLOWING", "ASSERTION_REASON"].includes(question.type)) {
       return value === optionId;
     }
     return value === choice;
@@ -153,18 +159,21 @@ export default function QuestionRenderer({
                                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Column II (Matches)</span>
                                      </div>
                                      <div className="space-y-3">
-                                        {question.options?.map((opt, i) => (
+                                        {(question.matchMatrix && question.matchMatrix.length > 0 
+                                            ? question.matchMatrix 
+                                            : (question.options || []).filter((o: any) => o.pair && o.pair.en)
+                                        ).map((opt: any, i: number) => (
                                             <div key={i} className="flex gap-4 items-stretch group">
                                                 <div className="flex-1 p-4 bg-white/5 rounded-2xl border border-white/10 group-hover:border-primary/50 transition-all flex items-center gap-4">
                                                     <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-black text-xs text-white shrink-0">{i+1}</span>
-                                                    <div className="text-white font-bold text-lg" dangerouslySetInnerHTML={{ __html: opt.text.en }} />
+                                                    <div className="text-white font-bold text-lg" dangerouslySetInnerHTML={{ __html: (opt.left?.en || opt.text?.en || "") }} />
                                                 </div>
                                                 <div className="w-8 flex items-center justify-center">
                                                     <div className="w-full h-px bg-white/10" />
                                                 </div>
                                                 <div className="flex-1 p-4 bg-white/5 rounded-2xl border border-white/10 group-hover:border-primary/50 transition-all flex items-center gap-4">
                                                     <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center font-black text-xs text-primary shrink-0">{String.fromCharCode(65 + i)}</span>
-                                                    <div className="text-white font-bold text-lg" dangerouslySetInnerHTML={{ __html: opt.pair?.en || "" }} />
+                                                    <div className="text-white font-bold text-lg" dangerouslySetInnerHTML={{ __html: (opt.right?.en || opt.pair?.en || "") }} />
                                                 </div>
                                             </div>
                                         ))}
