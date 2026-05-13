@@ -189,6 +189,12 @@ export default function CodeCompiler() {
                                 language={selectedLang.monaco}
                                 theme="vs-dark"
                                 value={code}
+                                loading={
+                                    <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-slate-950">
+                                        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] animate-pulse">Initializing IDE...</p>
+                                    </div>
+                                }
                                 onChange={(value) => setCode(value || "")}
                                 options={{
                                     fontSize: 14,
