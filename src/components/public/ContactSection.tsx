@@ -202,22 +202,34 @@ export default function ContactSection({ data, blocks }: { data?: any, blocks?: 
                 <div className="mt-20 bg-white p-4 md:p-6 rounded-[3rem] shadow-xl border border-slate-100 relative overflow-hidden group">
                     <div className="w-full h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden bg-slate-100 relative">
                         {(() => {
-                            let cleanUrl = extra?.map_url || "";
+                            let cleanUrl = (extra?.map_url || "").trim();
                             
-                            // 1. If it's an iframe tag, extract the src
-                            if (cleanUrl.includes("<iframe")) {
-                                const match = cleanUrl.match(/src="([^"]+)"/);
-                                if (match && match[1]) cleanUrl = match[1];
+                            // 1. Better Extraction: Detect if it's a full tag or just a URL
+                            if (cleanUrl.toLowerCase().includes("<iframe")) {
+                                // Extract content inside src="..." or src='...'
+                                const srcMatch = cleanUrl.match(/src=["']([^"']+)["']/i);
+                                if (srcMatch && srcMatch[1]) {
+                                    cleanUrl = srcMatch[1];
+                                }
                             }
                             
-                            // 2. If it's a standard Google Maps URL but not an embed URL, try to convert or use fallback
-                            // Embed URLs must contain /embed or be from the embed API
+                            // Decode HTML entities (in case &amp; is present)
+                            if (typeof document !== 'undefined') {
+                                const txt = document.createElement("textarea");
+                                txt.innerHTML = cleanUrl;
+                                cleanUrl = txt.value;
+                            } else {
+                                cleanUrl = cleanUrl.replace(/&amp;/g, '&');
+                            }
+
+                            // 2. Policy Enforcement
                             const isGoogleMaps = cleanUrl.includes("google.com/maps");
                             const isEmbedUrl = cleanUrl.includes("/embed") || cleanUrl.includes("pb=");
                             
-                            // If it's a Google Maps link but NOT an embed link, it will be blocked by Google
+                            // If it's a Google Maps link but NOT an embed link, Google will block it.
+                            // We detect this and use the fallback.
                             const isBlockedByPolicy = isGoogleMaps && !isEmbedUrl;
-                            const isShortLink = cleanUrl.includes("goo.gl");
+                            const isShortLink = cleanUrl.includes("goo.gl") || cleanUrl.includes("maps.app.goo.gl");
 
                             const finalUrl = (cleanUrl && !isBlockedByPolicy && !isShortLink) 
                                 ? cleanUrl 
@@ -225,6 +237,7 @@ export default function ContactSection({ data, blocks }: { data?: any, blocks?: 
                             
                             return (
                                 <iframe
+                                    key={finalUrl}
                                     src={finalUrl}
                                     width="100%"
                                     height="100%"
