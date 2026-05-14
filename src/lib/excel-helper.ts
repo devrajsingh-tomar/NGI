@@ -2,7 +2,7 @@ import ExcelJS from "exceljs";
 
 export async function parseExcelQuestions(buffer: Buffer) {
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(buffer);
+  await workbook.xlsx.load(buffer as any);
   const worksheet = workbook.getWorksheet(1);
   if (!worksheet) throw new Error("Worksheet not found");
 
@@ -29,7 +29,6 @@ export async function parseExcelQuestions(buffer: Buffer) {
         match_pairs: row.getCell(13).value?.toString(),
         assertion: row.getCell(14).value?.toString(),
         reason: row.getCell(15).value?.toString(),
-        typing_passage: row.getCell(16).value?.toString(),
       };
 
       const transformed = transformRowToQuestion(rowData, rowNumber);
@@ -136,9 +135,9 @@ function transformRowToQuestion(row: any, rowNumber: number) {
       // 1. Process the items to match (The Matrix)
       try {
         const pairs = typeof row.match_pairs === 'string' ? JSON.parse(row.match_pairs) : row.match_pairs;
-        base.matchMatrix = Object.entries(pairs).map(([key, val]) => ({
+        base.matchMatrix = Object.entries(pairs as Record<string, any>).map(([key, val]) => ({
           left: { en: key },
-          right: { en: val.toString() }
+          right: { en: String(val) }
         }));
       } catch (e) {
         throw new Error("Invalid match_pairs JSON format. Expected: {\"Item1\":\"Match1\", \"Item2\":\"Match2\"}");
@@ -180,12 +179,6 @@ function transformRowToQuestion(row: any, rowNumber: number) {
       break;
     }
 
-    case "TYPING": {
-      if (!row.typing_passage) throw new Error("TYPING requires typing_passage");
-      base.type = "TYPING";
-      base.shortAnswer = row.typing_passage;
-      break;
-    }
 
     default:
       throw new Error(`Unsupported question type: ${row.type}`);
@@ -214,7 +207,6 @@ export async function generateSampleTemplate() {
     { header: "match_pairs", key: "match_pairs", width: 30 },
     { header: "assertion", key: "assertion", width: 30 },
     { header: "reason", key: "reason", width: 30 },
-    { header: "typing_passage", key: "typing_passage", width: 30 },
   ];
 
   // Add examples for each type
@@ -225,7 +217,6 @@ export async function generateSampleTemplate() {
   worksheet.addRow(["English", "SHORT", "Synonym of 'Happy'", "", "", "", "", "", "Joyful", "MEDIUM", "en"]);
   worksheet.addRow(["O Level", "MATCH", "Match the following hardware components with their types.", "", "1-x, 2-y, 3-z, 4-w", "1-y, 2-x, 3-w, 4-z", "1-z, 2-w, 3-y, 4-x", "1-w, 2-z, 3-x, 4-y", "A", "HARD", "en", "Match correctly", '{"Mouse":"Input", "Monitor":"Output", "Keyboard":"Input", "Printer":"Output"}']);
   worksheet.addRow(["Science", "ASSERTION_REASON", "Analyze the following statement and its reason.", "", "", "", "", "", "A", "MEDIUM", "en", "Water is liquid at room temp.", "", "Water is liquid", "It has strong hydrogen bonding"]);
-  worksheet.addRow(["Typing", "TYPING", "Type the following paragraph as accurately as possible.", "", "", "", "", "", "", "MEDIUM", "en", "", "", "", "", "The quick brown fox jumps over the lazy dog. Programming is the art of telling another human what one wants the computer to do."]);
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;

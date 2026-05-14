@@ -87,46 +87,9 @@ export default function QuestionRenderer({
       </div>
 
       {/* Question Content Area */}
-      <div className={cn("flex-1 overflow-y-auto no-scrollbar relative z-10 p-4 md:p-8", question.type === "TYPING" && "overflow-hidden")}>
-        <div className={cn("mx-auto space-y-8", question.type === "TYPING" ? "max-w-full h-full" : "max-w-6xl")}>
+      <div className="flex-1 overflow-y-auto no-scrollbar relative z-10 p-4 md:p-8">
+        <div className="mx-auto space-y-8 max-w-6xl">
             
-            {question.type === "TYPING" ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-[400px]">
-                    {/* Left: Master Passage */}
-                    <div className="flex flex-col h-full space-y-4">
-                        <div className="flex items-center gap-4">
-                            <Badge className="bg-amber-600 text-white border-none px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0">Master Passage</Badge>
-                            <div className="text-sm font-bold text-slate-700 line-clamp-2" dangerouslySetInnerHTML={{ __html: question.content.en }} />
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-6 bg-amber-50 rounded-3xl border-2 border-amber-200 text-lg md:text-xl font-mono text-slate-800 leading-[1.8] shadow-inner select-none">
-                            {question.shortAnswer || question.content.en}
-                        </div>
-                    </div>
-
-                    {/* Right: Candidate Response Area */}
-                    <div className="flex flex-col h-full space-y-4">
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">Candidate Response Area</Label>
-                            <Badge className="bg-emerald-100 text-emerald-700 border-none px-3 py-1 rounded-lg text-[10px] font-black shrink-0">ACTIVE TYPING ZONE</Badge>
-                        </div>
-                        <textarea
-                            className="flex-1 w-full rounded-3xl bg-white border-4 border-slate-200 p-6 text-lg md:text-xl font-mono focus:ring-4 focus:ring-primary/20 focus:border-primary/50 transition-all outline-none resize-none shadow-inner"
-                            placeholder="Start typing the passage here..."
-                            value={value || ""}
-                            onChange={(e) => onChange(e.target.value)}
-                            onPaste={(e) => e.preventDefault()}
-                            onDrop={(e) => e.preventDefault()}
-                            spellCheck={false}
-                            autoComplete="off"
-                        />
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold italic ml-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            Cloud-synced: Your response is being saved in real-time.
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <>
                     {/* 1. Question Text & Specialized Displays */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
                         {/* Primary Content (English or Single) */}
@@ -293,8 +256,7 @@ export default function QuestionRenderer({
                             </div>
                         )}
                     </div>
-                </>
-            )}
+
         </div>
       </div>
 

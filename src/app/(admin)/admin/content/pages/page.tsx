@@ -27,7 +27,7 @@ export default function AdvancedCmsPage() {
     const [loading, setLoading] = useState(true);
     const [sidebarVisible, setSidebarVisible] = useState(true);
 
-    const sectionTypes = ["HeroSection", "CourseGrid", "FacultyGrid", "GalleryGrid", "TestimonialSlider", "CTASection", "TypingTestCTASection", "AboutSection", "WhyChooseSection", "ContactSection", "AchievementsSection", "CoursesSection", "FacultySection", "EventsSection", "InfrastructureSection", "PublicResultsGrid", "PublicExamsGrid", "NotificationScroller", "TrustIndicators", "VideoFeedbackSection", "BlogSection"];
+    const sectionTypes = ["HeroSection", "CourseGrid", "FacultyGrid", "GalleryGrid", "TestimonialSlider", "CTASection", "AboutSection", "WhyChooseSection", "ContactSection", "AchievementsSection", "CoursesSection", "FacultySection", "EventsSection", "InfrastructureSection", "PublicResultsGrid", "PublicExamsGrid", "NotificationScroller", "TrustIndicators", "VideoFeedbackSection", "BlogSection"];
 
     const DATA_DRIVEN_SECTIONS: Record<string, { label: string, link: string }> = {
         "CoursesSection": { label: "Courses", link: "/admin/courses" },

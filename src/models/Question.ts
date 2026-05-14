@@ -9,7 +9,6 @@ export enum QuestionType {
     DESCRIPTIVE = "DESCRIPTIVE",
     MATCH_THE_FOLLOWING = "MATCH_THE_FOLLOWING",
     ASSERTION_REASON = "ASSERTION_REASON",
-    TYPING = "TYPING",
 }
 
 export enum Difficulty {

@@ -6,8 +6,7 @@ export type QuestionType =
   | "SHORT_ANSWER" 
   | "DESCRIPTIVE" 
   | "MATCH_THE_FOLLOWING" 
-  | "ASSERTION_REASON" 
-  | "TYPING";
+  | "ASSERTION_REASON";
 
 export interface Question {
   _id: string;
@@ -32,8 +31,6 @@ export interface Question {
   }[];
   shortAnswer?: string;
   numericAnswer?: number;
-  // Typing specific
-  typingConfig?: any;
 }
 
 export interface ExamState {
@@ -43,7 +40,6 @@ export interface ExamState {
   attempted: string[];
   flagged: number[];
   timer: number;
-  typingStats?: Record<string, any>;
 }
 
 export interface QuestionRendererProps {

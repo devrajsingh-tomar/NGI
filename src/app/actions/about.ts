@@ -24,15 +24,14 @@ export async function getAboutPageData() {
                 },
                 intro: {
                     title: "About NGI Study Zone",
-                    text1: "National Genius Institute (NGI Study Zone) is a professional training institute located in Prayagraj. The institute provides a wide range of computer courses, diploma programs, government exam preparation, and typing training in both Hindi and English languages.",
+                    text1: "National Genius Institute (NGI Study Zone) is a professional training institute located in Prayagraj. The institute provides a wide range of computer courses, diploma programs, and government exam preparation.",
                     text2: "NGI Study Zone aims to empower students with digital skills, practical knowledge, and career guidance so they can succeed in competitive exams and professional careers.",
                     image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070"
                 },
                 checklist: [
                     "Diploma Programs",
                     "Computer Courses",
-                    "Govt. Exam Prep",
-                    "Typing (Hindi/English)"
+                    "Govt. Exam Prep"
                 ],
                 mission: {
                     title: "Our Mission",
@@ -47,7 +46,7 @@ export async function getAboutPageData() {
                 stats: [
                     { label: "Courses Available", value: "50+", icon: "BookOpen" },
                     { label: "Expert Faculty", value: "16+", icon: "Award" },
-                    { label: "Speed Guarantee", value: "100%", icon: "Rocket" },
+                    { label: "Successful Careers", value: "100%", icon: "Rocket" },
                     { label: "Smart Classrooms", value: "Classrooms & Online", icon: "MonitorPlay" }
                 ]
             }

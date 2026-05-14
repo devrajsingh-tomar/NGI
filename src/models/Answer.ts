@@ -6,7 +6,6 @@ export interface IAnswer extends Document {
     selectedOptionIds?: mongoose.Types.ObjectId[];
     textResponse?: string;
     fileUrl?: string;
-    typingSpeedWPM?: number;
     timeTakenSeconds: number;
     evaluation: {
         isEvaluated: boolean;
@@ -26,7 +25,6 @@ const AnswerSchema = new Schema<IAnswer>(
         selectedOptionIds: [{ type: Schema.Types.ObjectId }],
         textResponse: { type: String },
         fileUrl: { type: String },
-        typingSpeedWPM: { type: Number },
         timeTakenSeconds: { type: Number, default: 0 },
         evaluation: {
             isEvaluated: { type: Boolean, default: false },
