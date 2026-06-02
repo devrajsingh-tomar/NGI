@@ -23,6 +23,12 @@ export interface IWebsiteSetting extends Document {
         primaryColor: string;
         darkModeEnabled: boolean;
     };
+    floatingWidget?: {
+        enabled: boolean;
+        type: 'whatsapp' | 'facebook' | 'instagram' | 'youtube' | 'telegram' | 'custom';
+        value: string;
+        tooltipText?: string;
+    };
     updatedAt: Date;
 }
 
@@ -49,6 +55,12 @@ const WebsiteSettingSchema = new Schema<IWebsiteSetting>(
         themeSettings: {
             primaryColor: { type: String, default: "#D97706" },
             darkModeEnabled: { type: Boolean, default: false },
+        },
+        floatingWidget: {
+            enabled: { type: Boolean, default: false },
+            type: { type: String, enum: ['whatsapp', 'facebook', 'instagram', 'youtube', 'telegram', 'custom'], default: 'whatsapp' },
+            value: { type: String, default: "" },
+            tooltipText: { type: String, default: "Chat with us" },
         }
     },
     { timestamps: true }
