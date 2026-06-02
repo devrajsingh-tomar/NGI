@@ -4,12 +4,19 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Save, Lock, User, Bell, Loader2, MessageSquare, Sliders } from "lucide-react";
+import { Save, Lock, User, Bell, Loader2, MessageSquare, Sliders, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { updateUserDetails, updateUserPassword } from "@/app/actions/user";
 import { Switch } from "@/components/ui/switch";
 import { getWebsiteSettings, updateFloatingWidgetSettings } from "@/app/actions/settings";
 import { cn } from "@/lib/utils";
+
+interface FloatingWidget {
+    enabled: boolean;
+    type: "whatsapp" | "facebook" | "instagram" | "youtube" | "telegram" | "linkedin" | "email" | "custom";
+    value: string;
+    tooltipText: string;
+}
 
 export default function AdminSettingsPage() {
     const { data: session, update } = useSession();
@@ -25,10 +32,7 @@ export default function AdminSettingsPage() {
     // Floating Widget States
     const [settingsLoading, setSettingsLoading] = useState(true);
     const [widgetSaving, setWidgetSaving] = useState(false);
-    const [widgetEnabled, setWidgetEnabled] = useState(false);
-    const [widgetType, setWidgetType] = useState<"whatsapp" | "facebook" | "instagram" | "youtube" | "telegram" | "custom">("whatsapp");
-    const [widgetValue, setWidgetValue] = useState("");
-    const [widgetTooltip, setWidgetTooltip] = useState("Chat with us");
+    const [widgets, setWidgets] = useState<FloatingWidget[]>([]);
 
     useEffect(() => {
         loadSettings();
@@ -39,11 +43,13 @@ export default function AdminSettingsPage() {
             setSettingsLoading(true);
             const res = await getWebsiteSettings();
             if (res.success && res.settings) {
-                const widget = res.settings.floatingWidget || {};
-                setWidgetEnabled(!!widget.enabled);
-                setWidgetType(widget.type || "whatsapp");
-                setWidgetValue(widget.value || "");
-                setWidgetTooltip(widget.tooltipText || "Chat with us");
+                const loadedWidgets = res.settings.floatingWidgets || [];
+                setWidgets(loadedWidgets.map((w: any) => ({
+                    enabled: typeof w.enabled === "boolean" ? w.enabled : true,
+                    type: w.type || "whatsapp",
+                    value: w.value || "",
+                    tooltipText: w.tooltipText || "Chat with us"
+                })));
             } else {
                 toast.error("Failed to load website settings");
             }
@@ -83,23 +89,28 @@ export default function AdminSettingsPage() {
     };
 
     const handleSaveWidgetSettings = async () => {
-        if (widgetEnabled && !widgetValue) {
-            return toast.error("Please enter a link or contact details for the floating widget");
+        for (let i = 0; i < widgets.length; i++) {
+            if (widgets[i].enabled && !widgets[i].value) {
+                return toast.error(`Please enter a link or contact details for Widget #${i + 1}`);
+            }
         }
 
         setWidgetSaving(true);
         try {
             const res = await updateFloatingWidgetSettings({
-                enabled: widgetEnabled,
-                type: widgetType,
-                value: widgetValue,
-                tooltipText: widgetTooltip,
+                widgets: widgets.map(w => ({
+                    enabled: w.enabled,
+                    type: w.type,
+                    value: w.value,
+                    tooltipText: w.tooltipText || "Chat with us"
+                }))
             });
 
             if (res.success) {
-                toast.success("Floating widget settings updated successfully!");
+                toast.success("Floating widgets updated successfully!");
+                loadSettings();
             } else {
-                toast.error(res.error || "Failed to update widget settings");
+                toast.error(res.error || "Failed to update widgets settings");
             }
         } catch (error) {
             console.error(error);
@@ -107,6 +118,36 @@ export default function AdminSettingsPage() {
         } finally {
             setWidgetSaving(false);
         }
+    };
+
+    const addWidget = () => {
+        setWidgets([...widgets, {
+            enabled: true,
+            type: "whatsapp",
+            value: "",
+            tooltipText: "Chat with us"
+        }]);
+    };
+
+    const removeWidget = (index: number) => {
+        setWidgets(widgets.filter((_, i) => i !== index));
+    };
+
+    const updateWidgetField = (index: number, field: keyof FloatingWidget, val: any) => {
+        const copy = [...widgets];
+        copy[index] = { ...copy[index], [field]: val };
+        setWidgets(copy);
+    };
+
+    const moveWidget = (index: number, direction: "up" | "down") => {
+        if (direction === "up" && index === 0) return;
+        if (direction === "down" && index === widgets.length - 1) return;
+        const newIndex = direction === "up" ? index - 1 : index + 1;
+        const copy = [...widgets];
+        const temp = copy[index];
+        copy[index] = copy[newIndex];
+        copy[newIndex] = temp;
+        setWidgets(copy);
     };
 
     return (
@@ -158,72 +199,154 @@ export default function AdminSettingsPage() {
                                 <MessageSquare className="w-5 h-5" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-slate-900">Floating Contact Widget</h2>
-                                <p className="text-[11px] text-slate-400 font-bold mt-0.5">Toggle and configure floating social/WhatsApp support widget</p>
+                                <h2 className="text-xl font-bold text-slate-900">Floating Contact Stack</h2>
+                                <p className="text-[11px] text-slate-400 font-bold mt-0.5">Toggle and configure floating social/contact widgets stacked vertically</p>
                             </div>
                         </div>
                         {settingsLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
                         ) : (
-                            <Switch checked={widgetEnabled} onCheckedChange={setWidgetEnabled} />
+                            <Button 
+                                onClick={addWidget}
+                                size="sm" 
+                                className="h-9 rounded-xl font-bold gap-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/10"
+                            >
+                                <Plus className="w-4 h-4" /> Add Widget
+                            </Button>
                         )}
                     </div>
 
                     {!settingsLoading && (
-                        <div className={cn("space-y-5 transition-all", !widgetEnabled && "opacity-50 pointer-events-none")}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-700 ml-1">Widget Platform</label>
-                                    <select
-                                        value={widgetType}
-                                        onChange={(e) => setWidgetType(e.target.value as any)}
-                                        className="w-full h-12 px-5 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 font-bold text-xs"
-                                    >
-                                        <option value="whatsapp">WhatsApp Chat</option>
-                                        <option value="telegram">Telegram Chat</option>
-                                        <option value="instagram">Instagram Profile</option>
-                                        <option value="facebook">Facebook Messenger</option>
-                                        <option value="youtube">YouTube Channel</option>
-                                        <option value="custom">Custom URL Link</option>
-                                    </select>
+                        <div className="space-y-6">
+                            {widgets.length === 0 ? (
+                                <div className="text-center py-8 border-2 border-dashed border-slate-100 rounded-2xl">
+                                    <p className="text-sm font-bold text-slate-400">No floating widgets added yet</p>
+                                    <Button onClick={addWidget} variant="outline" className="mt-3 h-10 rounded-xl font-bold text-xs">
+                                        Create your first widget
+                                    </Button>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-700 ml-1">
-                                        {widgetType === "whatsapp" ? "WhatsApp Number (with country code)" : "Destination URL Link"}
-                                    </label>
-                                    <Input
-                                        value={widgetValue}
-                                        onChange={(e) => setWidgetValue(e.target.value)}
-                                        placeholder={widgetType === "whatsapp" ? "e.g. +919839446340" : "e.g. https://t.me/yourusername"}
-                                        className="h-12 rounded-xl border-slate-200 font-bold"
-                                    />
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase ml-1">
-                                        {widgetType === "whatsapp" 
-                                            ? "Format: Include '+' and your country code (e.g. +91 for India)" 
-                                            : "Ensure the link starts with http:// or https://"}
-                                    </p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {widgets.map((widget, index) => (
+                                        <div 
+                                            key={index} 
+                                            className={cn(
+                                                "border rounded-2xl p-5 bg-slate-50/50 transition-all",
+                                                !widget.enabled && "opacity-60 bg-slate-100/50"
+                                            )}
+                                        >
+                                            {/* Widget header controls */}
+                                            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Widget #{index + 1}</span>
+                                                    {!widget.enabled && (
+                                                        <span className="text-[10px] bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full">Disabled</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        disabled={index === 0}
+                                                        onClick={() => moveWidget(index, "up")}
+                                                        className="w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-40"
+                                                    >
+                                                        <ArrowUp className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        disabled={index === widgets.length - 1}
+                                                        onClick={() => moveWidget(index, "down")}
+                                                        className="w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-40"
+                                                    >
+                                                        <ArrowDown className="w-4 h-4" />
+                                                    </Button>
+                                                    <div className="w-px h-5 bg-slate-200 mx-1" />
+                                                    <Switch 
+                                                        checked={widget.enabled} 
+                                                        onCheckedChange={(val) => updateWidgetField(index, "enabled", val)} 
+                                                    />
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        onClick={() => removeWidget(index)}
+                                                        className="w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-50"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* Widget Form Inputs */}
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs font-bold text-slate-500 ml-1">Platform Type</label>
+                                                    <select
+                                                        value={widget.type}
+                                                        onChange={(e) => updateWidgetField(index, "type", e.target.value)}
+                                                        className="w-full h-11 px-4 rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-slate-900 font-bold text-xs"
+                                                    >
+                                                        <option value="whatsapp">WhatsApp Chat</option>
+                                                        <option value="telegram">Telegram Chat</option>
+                                                        <option value="instagram">Instagram Profile</option>
+                                                        <option value="facebook">Facebook Messenger</option>
+                                                        <option value="linkedin">LinkedIn Page</option>
+                                                        <option value="youtube">YouTube Channel</option>
+                                                        <option value="email">Email Address</option>
+                                                        <option value="custom">Custom URL Link</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className="space-y-1.5 md:col-span-2">
+                                                    <label className="text-xs font-bold text-slate-500 ml-1">
+                                                        {widget.type === "whatsapp" 
+                                                            ? "WhatsApp Number (with country code)" 
+                                                            : widget.type === "email"
+                                                            ? "Email Address"
+                                                            : "Destination URL Link"}
+                                                    </label>
+                                                    <Input
+                                                        value={widget.value}
+                                                        onChange={(e) => updateWidgetField(index, "value", e.target.value)}
+                                                        placeholder={
+                                                            widget.type === "whatsapp" 
+                                                                ? "e.g. +919839446340" 
+                                                                : widget.type === "email"
+                                                                ? "e.g. info@ngistudyzone.com"
+                                                                : "e.g. https://t.me/username"
+                                                        }
+                                                        className="h-11 rounded-xl border-slate-200 font-medium text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-3 space-y-1.5">
+                                                <label className="text-xs font-bold text-slate-500 ml-1">Hover Tooltip Text</label>
+                                                <Input
+                                                    value={widget.tooltipText}
+                                                    onChange={(e) => updateWidgetField(index, "tooltipText", e.target.value)}
+                                                    placeholder="e.g. Connect on LinkedIn"
+                                                    className="h-11 rounded-xl border-slate-200 font-medium text-sm"
+                                                    maxLength={50}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-700 ml-1">Hover Tooltip Text</label>
-                                <Input
-                                    value={widgetTooltip}
-                                    onChange={(e) => setWidgetTooltip(e.target.value)}
-                                    placeholder="e.g. Chat with us on WhatsApp"
-                                    className="h-12 rounded-xl border-slate-200 font-bold"
-                                    maxLength={50}
-                                />
-                            </div>
-
-                            <div className="pt-2">
+                            <div className="pt-2 border-t border-slate-100 flex justify-between items-center">
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                    Total widgets: {widgets.length}
+                                </p>
                                 <Button 
                                     onClick={handleSaveWidgetSettings} 
                                     disabled={widgetSaving}
                                     className="h-12 px-8 rounded-xl font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-lg transition-all hover:scale-[1.02] gap-2"
                                 >
                                     {widgetSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                    Save Widget Settings
+                                    Save Stack Settings
                                 </Button>
                             </div>
                         </div>

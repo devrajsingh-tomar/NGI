@@ -7,12 +7,14 @@ import { UserRole } from "@/models/User";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
-// Zod validation schema for floating widget settings
+// Zod validation schema for floating widget settings list
 const FloatingWidgetSettingsSchema = z.object({
-    enabled: z.boolean(),
-    type: z.enum(["whatsapp", "facebook", "instagram", "youtube", "telegram", "custom"]),
-    value: z.string().min(1, "Link or number is required"),
-    tooltipText: z.string().max(50).optional().default("Chat with us"),
+    widgets: z.array(z.object({
+        enabled: z.boolean(),
+        type: z.enum(["whatsapp", "facebook", "instagram", "youtube", "telegram", "linkedin", "email", "custom"]),
+        value: z.string().min(1, "Link or number is required"),
+        tooltipText: z.string().max(50).optional().default("Chat with us"),
+    }))
 });
 
 // Fetch current website settings (or create a default one if it doesn't exist)
@@ -49,11 +51,23 @@ export async function getWebsiteSettings() {
                     type: "whatsapp",
                     value: "",
                     tooltipText: "Chat with us",
-                }
+                },
+                floatingWidgets: [
+                    {
+                        enabled: false,
+                        type: "whatsapp",
+                        value: "",
+                        tooltipText: "Chat with us",
+                    }
+                ]
             });
             settings = JSON.parse(JSON.stringify(defaultSettings));
         } else {
             settings = JSON.parse(JSON.stringify(settings));
+        }
+
+        if (!settings.floatingWidgets) {
+            settings.floatingWidgets = [];
         }
 
         return { success: true, settings };
@@ -79,11 +93,11 @@ export const updateFloatingWidgetSettings = createSafeAction(
             // Create new settings with the widget data
             settings = await WebsiteSetting.create({
                 instituteName: "NGI Study Zone",
-                floatingWidget: data,
+                floatingWidgets: data.widgets,
             });
         } else {
             // Update existing settings
-            settings.floatingWidget = data;
+            settings.floatingWidgets = data.widgets;
             await settings.save();
         }
 

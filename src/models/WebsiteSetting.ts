@@ -29,6 +29,12 @@ export interface IWebsiteSetting extends Document {
         value: string;
         tooltipText?: string;
     };
+    floatingWidgets?: Array<{
+        enabled: boolean;
+        type: 'whatsapp' | 'facebook' | 'instagram' | 'youtube' | 'telegram' | 'linkedin' | 'email' | 'custom';
+        value: string;
+        tooltipText?: string;
+    }>;
     updatedAt: Date;
 }
 
@@ -61,7 +67,15 @@ const WebsiteSettingSchema = new Schema<IWebsiteSetting>(
             type: { type: String, enum: ['whatsapp', 'facebook', 'instagram', 'youtube', 'telegram', 'custom'], default: 'whatsapp' },
             value: { type: String, default: "" },
             tooltipText: { type: String, default: "Chat with us" },
-        }
+        },
+        floatingWidgets: [
+            {
+                enabled: { type: Boolean, default: true },
+                type: { type: String, enum: ['whatsapp', 'facebook', 'instagram', 'youtube', 'telegram', 'linkedin', 'email', 'custom'], default: 'whatsapp' },
+                value: { type: String, default: "" },
+                tooltipText: { type: String, default: "Chat with us" },
+            }
+        ]
     },
     { timestamps: true }
 );
