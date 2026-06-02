@@ -20,7 +20,8 @@ import {
     Bell,
     Video,
     Keyboard,
-    MonitorPlay
+    MonitorPlay,
+    Star
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -99,6 +100,7 @@ const menuGroups = [
             { label: "Media Gallery", href: "/admin/gallery", icon: ImageIcon },
             { label: "Notices & Updates", href: "/admin/notices", icon: Bell },
             { label: "Video Testimonials", href: "/admin/feedback", icon: MonitorPlay },
+            { label: "Student Testimonials", href: "/admin/testimonials", icon: Star },
             { label: "Events Calendar", href: "/admin/events", icon: Calendar },
         ]
     },

@@ -12,9 +12,7 @@ type UploadResult = {
 
 // Configuration
 // Configuration - Store in root directory as expected by the /api/uploads route
-const UPLOAD_BASE = process.cwd();
-const UPLOAD_REL_PATH = path.join("uploads", "gallery");
-const UPLOAD_DIR = path.join(UPLOAD_BASE, UPLOAD_REL_PATH);
+const UPLOAD_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), "uploads", "gallery");
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // Increased to 10MB for larger profile pics/materials
 const ALLOWED_TYPES = [
@@ -57,27 +55,17 @@ const validateBuffer = (buffer: Buffer, type: string): boolean => {
  */
 const ensureUploadDir = async () => {
     try {
-        const folders = ["uploads", "gallery"];
-        let currentPath = /* turbopackIgnore: true */ process.cwd();
-
-        for (const folder of folders) {
-            currentPath = path.join(currentPath, folder);
+        await mkdir(UPLOAD_DIR, { recursive: true });
+        // Set directory permissions to 755 (drwxr-xr-x) for web access
+        try {
+            const { chmod } = await import("fs/promises");
+            await chmod(UPLOAD_DIR, 0o755);
             
-            try {
-                await mkdir(currentPath, { recursive: true });
-                // Set directory permissions to 755 (drwxr-xr-x) for web access
-                try {
-                    const { chmod } = await import("fs/promises");
-                    await chmod(currentPath, 0o755);
-                } catch (e) {
-                    // Windows or permission issue
-                }
-            } catch (err: any) {
-                if (err.code !== 'EEXIST') {
-                    console.error(`Failed to create directory ${currentPath}:`, err);
-                    throw err;
-                }
-            }
+            // Also ensure the parent uploads directory is 755
+            const parentDir = path.join(/* turbopackIgnore: true */ process.cwd(), "uploads");
+            await chmod(parentDir, 0o755);
+        } catch (e) {
+            // Windows or permission issue
         }
     } catch (error) {
         console.error("Error in ensureUploadDir:", error);

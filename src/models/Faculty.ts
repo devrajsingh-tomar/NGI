@@ -16,6 +16,7 @@ export interface IFaculty extends Document {
         linkedin?: string;
     };
     status: 'active' | 'inactive';
+    order?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -37,6 +38,7 @@ const FacultySchema = new Schema<IFaculty>(
             linkedin: { type: String },
         },
         status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+        order: { type: Number, default: 0 },
     },
     { timestamps: true }
 );

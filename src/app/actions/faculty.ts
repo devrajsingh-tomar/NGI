@@ -36,7 +36,7 @@ export async function deleteFaculty(id: string) {
 export async function getFaculty() {
     try {
         await connectDB();
-        const faculty = await Faculty.find({}).sort({ createdAt: -1 }).lean();
+        const faculty = await Faculty.find({}).sort({ order: 1, createdAt: -1 }).lean();
         return { success: true, faculty: JSON.parse(JSON.stringify(faculty)) };
     } catch (error) {
         console.error("Failed to load faculty", error);
@@ -67,5 +67,28 @@ export async function updateFaculty(id: string, data: any) {
     } catch (error: any) {
         console.error("Update Faculty Error:", error);
         return { success: false, error: error.message || "Failed to update faculty" };
+    }
+}
+
+export async function updateFacultyOrder(ids: string[]) {
+    try {
+        await connectDB();
+
+        const bulkOps = ids.map((id, index) => ({
+            updateOne: {
+                filter: { _id: id },
+                update: { $set: { order: index } }
+            }
+        }));
+
+        await Faculty.bulkWrite(bulkOps);
+
+        revalidatePath("/admin/faculty");
+        revalidatePath("/faculty");
+        revalidatePath("/", "layout");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Update Faculty Order Error:", error);
+        return { success: false, error: error.message || "Failed to update order" };
     }
 }

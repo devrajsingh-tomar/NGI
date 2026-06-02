@@ -60,7 +60,7 @@ export default function DynamicRenderer({ sections, staticFallback, extraData, s
                     case "GallerySection":
                         return <GallerySection key={sectionKey} data={section} images={extraData?.gallery || []} />;
                     case "TestimonialSlider":
-                        return <TestimonialSlider key={sectionKey} data={section} blocks={section.blocks} />;
+                        return <TestimonialSlider key={sectionKey} data={section} blocks={section.blocks} testimonials={extraData?.testimonials || []} />;
                     case "AchievementsSection":
                         return <AchievementsSection key={sectionKey} data={section} blocks={section.blocks} />;
                     case "CTASection":

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
     Home, PlayCircle, BookOpen, Trophy, TrendingUp,
     ClipboardList, Award, UserCircle, CreditCard,
-    GraduationCap, X, Menu, Keyboard, ChevronRight, Terminal
+    GraduationCap, X, Menu, Keyboard, ChevronRight, Terminal, MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
@@ -23,6 +23,7 @@ const menuItems = [
     { label: "Attendance", href: "/student/attendance", icon: ClipboardList },
     { label: "Certificates", href: "/student/certificates", icon: Award },
     { label: "Profile", href: "/student/settings", icon: UserCircle },
+    { label: "Share Feedback", href: "/student/feedback", icon: MessageSquare },
 ];
 
 interface StudentSidebarProps {

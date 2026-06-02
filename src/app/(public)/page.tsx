@@ -34,6 +34,7 @@ import BlogSection from "@/components/public/BlogSection";
 import { getPublicFeedback } from "@/app/actions/feedback";
 import VideoFeedbackSection from "@/components/public/VideoFeedbackSection";
 import NoticeSliderSection from "@/components/public/NoticeSliderSection";
+import { getPublicTestimonials } from "@/app/actions/testimonials";
 
 export default async function PublicHomePage() {
     let session = null;
@@ -42,7 +43,7 @@ export default async function PublicHomePage() {
     } catch (e) {
         console.warn("Home page session fetch suppressed:", e);
     }
-    const [slidesRes, stats, about, facultyRes, coursesRes, eventsRes, galleryRes, noticesRes, dynamicData, resultsRes, examsRes, blogRes, feedbackRes, directorInfo] = await Promise.all([
+    const [slidesRes, stats, about, facultyRes, coursesRes, eventsRes, galleryRes, noticesRes, dynamicData, resultsRes, examsRes, blogRes, feedbackRes, directorInfo, testimonialsRes] = await Promise.all([
         getHeroSlides(),
         getCMSContent("HOME_STATS"),
         getCMSContent("HOME_ABOUT"),
@@ -57,6 +58,7 @@ export default async function PublicHomePage() {
         listBlogPosts({ status: "PUBLISHED", limit: 3, page: 1 }),
         getPublicFeedback({ limit: 6 }),
         getCMSContent("DIRECTOR_INFO"),
+        getPublicTestimonials({ limit: 12 })
     ]);
 
     const heroSlides = slidesRes.success ? slidesRes.slides : [];
@@ -72,6 +74,7 @@ export default async function PublicHomePage() {
     const publicExams = ((examsRes as any)?.success ? (examsRes as any).exams : []).slice(0, 6);
     const publicBlogs = (blogRes.success ? blogRes.data.posts : []).slice(0, 3);
     const publicFeedback = feedbackRes.success ? feedbackRes.data : [];
+    const publicTestimonials = testimonialsRes.success ? testimonialsRes.data : [];
 
     const cmsSections = dynamicData.success && dynamicData.sections ? dynamicData.sections : [];
 
@@ -100,7 +103,8 @@ export default async function PublicHomePage() {
                     notices: noticesRes.success ? noticesRes.notices : [],
                     heroSlides: heroSlides,
                     director: directorInfo,
-                    session: session
+                    session: session,
+                    testimonials: publicTestimonials
                 }}
                 session={session}
                 staticFallback={
