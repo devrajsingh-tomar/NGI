@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IQuiz extends Document {
     title: string;
     logo?: string;
-    courseId: mongoose.Types.ObjectId;
+    courseId?: mongoose.Types.ObjectId;
+
     examCode?: string;
     batchIds?: mongoose.Types.ObjectId[];
     settings: {
@@ -49,8 +50,7 @@ const QuizSchema = new Schema<IQuiz>(
         title: { type: String, required: true },
         logo: { type: String },
         description: { type: String },
-        courseId: { type: Schema.Types.ObjectId, ref: "Course", required: true },
-        examCode: { type: String },
+        courseId: { type: Schema.Types.ObjectId, ref: "Course" },
         batchIds: [{ type: Schema.Types.ObjectId, ref: "Batch" }],
         settings: {
             timeLimit: { type: Number, required: true },

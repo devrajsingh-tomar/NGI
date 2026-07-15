@@ -52,7 +52,7 @@ export default function NewPaperSetPage() {
 
     // Filtering for question bank
     const [searchQ, setSearchQ] = useState("");
-    const [useBlueprintFilters, setUseBlueprintFilters] = useState(true);
+    const [useBlueprintFilters, setUseBlueprintFilters] = useState(false);
 
     useEffect(() => {
         loadData();
@@ -335,10 +335,6 @@ export default function NewPaperSetPage() {
                                         value={searchQ}
                                         onChange={(e) => setSearchQ(e.target.value)}
                                     />
-                                </div>
-                                <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100 whitespace-nowrap">
-                                    <Switch checked={useBlueprintFilters} onCheckedChange={setUseBlueprintFilters} />
-                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Filter by Blueprint</span>
                                 </div>
                             </div>
                         </div>

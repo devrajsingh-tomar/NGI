@@ -126,13 +126,22 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
     };
 
     const handleSubmit = async () => {
-        if (!formData.title || !formData.courseId) {
-            toast.error("Please fill all required fields.");
+        if (!formData.title) {
+            toast.error("Please provide a Mock Test Title.");
+            return;
+        }
+        if (!formData.isMockTest && !formData.courseId) {
+            toast.error("Please select a Target Course.");
             return;
         }
 
         setSubmitting(true);
-        const res = await updateAdminQuiz(id, formData);
+        const payload = {
+            ...formData,
+            courseId: formData.courseId || undefined,
+            paperSetId: formData.paperSetId || undefined
+        };
+        const res = await updateAdminQuiz(id, payload);
         if (res.success) {
             toast.success("Mock Test updated successfully!");
             router.push("/admin/mock-tests");

@@ -105,21 +105,19 @@ export default function NewMockTestPage() {
             toast.error("Please provide a Mock Test Title.");
             return;
         }
-        if (!formData.courseId) {
+        if (!formData.isMockTest && !formData.courseId) {
             toast.error("Please select a Target Course.");
-            return;
-        }
-        if (!formData.paperSetId) {
-            toast.error("Please select a Paper Set Blueprint.");
             return;
         }
 
         setSubmitting(true);
-        // Map any extra fields if needed for the backend action
         const payload = {
             ...formData,
-            // Include questions from the paper set
-            questions: paperSets.find(p => p._id === formData.paperSetId)?.questions || []
+            courseId: formData.courseId || undefined,
+            paperSetId: formData.paperSetId || undefined,
+            questions: formData.paperSetId 
+                ? (paperSets.find(p => p._id === formData.paperSetId)?.questions || [])
+                : []
         };
         
         const res = await createAdminQuiz(payload);
