@@ -11,13 +11,12 @@ import { useSession } from "next-auth/react";
 import ExamLayout from "@/components/exams/engine/ExamLayout";
 import QuestionRenderer from "@/components/exams/engine/QuestionRenderer";
 import { ExamState } from "@/components/exams/engine/types";
-
 export default function StudentQuizLivePage({ params }: { params: Promise<{ quizId: string }> }) {
-    const { quizId } = use(params);
     const router = useRouter();
     const { data: session } = useSession();
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const [quizId, setQuizId] = useState("");
     const [quiz, setQuiz] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -39,7 +38,15 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
     const [warnings, setWarnings] = useState(0);
     const lastWarnedRef = useRef(0);
 
+    // Resolve params
     useEffect(() => {
+        params.then((p) => {
+            setQuizId(p.quizId);
+        });
+    }, [params]);
+
+    useEffect(() => {
+        if (!quizId) return;
         const fetchQuiz = async () => {
             const res = await getQuiz({ quizId });
             if (res.success) {
@@ -193,7 +200,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
         }));
     };
 
-    if (loading) {
+    if (!quizId || loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 gap-6">
                 <Loader2 className="w-16 h-16 text-primary animate-spin" />
@@ -201,7 +208,7 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
             </div>
         );
     }
-
+ 
     if (error || !quiz) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-white p-8 text-center animate-in fade-in duration-500">

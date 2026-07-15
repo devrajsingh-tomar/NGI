@@ -16,14 +16,21 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 export default function QuizAnalysisPage({ params }: { params: Promise<{ quizId: string }> }) {
-    const { quizId } = use(params);
     const searchParams = useSearchParams();
     const attemptId = searchParams.get("attemptId");
 
+    const [quizId, setQuizId] = useState("");
     const [analysis, setAnalysis] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        params.then((p) => {
+            setQuizId(p.quizId);
+        });
+    }, [params]);
+
+    useEffect(() => {
+        if (!quizId) return;
         const fetchAnalysis = async () => {
             const res = await getQuizAnalysis({ 
                 attemptId: attemptId || undefined, 
@@ -39,7 +46,7 @@ export default function QuizAnalysisPage({ params }: { params: Promise<{ quizId:
         fetchAnalysis();
     }, [attemptId, quizId]);
 
-    if (loading) {
+    if (loading || !quizId) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

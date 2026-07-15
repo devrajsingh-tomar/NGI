@@ -27,27 +27,32 @@ import { getDetailedResult } from "@/app/actions/mockTestResults";
 import { sanitizeHtml } from "@/lib/sanitizer";
 
 export default function ResultAnalysisPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+    const [id, setId] = useState("");
     const [data, setData] = useState<{result: any, answers: any[]} | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        params.then((p) => {
+            setId(p.id);
+        });
+    }, [params]);
+
+    useEffect(() => {
+        if (!id) return;
+        const loadResult = async () => {
+            setLoading(true);
+            const res = await getDetailedResult(id);
+            if (res.success) {
+                setData({ result: res.result, answers: res.answers });
+            } else {
+                toast.error(res.error || "Failed to load result analysis");
+            }
+            setLoading(false);
+        };
         loadResult();
     }, [id]);
 
-    const loadResult = async () => {
-        setLoading(true);
-        const res = await getDetailedResult(id);
-        if (res.success) {
-            setData({ result: res.result, answers: res.answers });
-        } else {
-            toast.error(res.error || "Failed to load result analysis");
-        }
-        setLoading(false);
-    };
-
-    if (loading) {
-        // ... loading state unchanged ...
+    if (loading || !id) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
                 <div className="w-12 h-12 border-4 border-slate-100 border-t-primary rounded-full animate-spin"></div>
