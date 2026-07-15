@@ -21,11 +21,19 @@ export const initiatePayment = createSafeAction(
     async ({ courseId }, session) => {
         await connectDB();
 
+        const decodedCourseId = decodeURIComponent(courseId);
         let course;
         if (mongoose.Types.ObjectId.isValid(courseId)) {
             course = await Course.findById(courseId);
+        } else if (mongoose.Types.ObjectId.isValid(decodedCourseId)) {
+            course = await Course.findById(decodedCourseId);
         } else {
-            course = await Course.findOne({ slug: courseId });
+            course = await Course.findOne({
+                $or: [
+                    { slug: courseId },
+                    { slug: decodedCourseId }
+                ]
+            });
         }
 
         if (!course) {

@@ -430,13 +430,13 @@ export async function getPublicCourses() {
 export async function getPublicCourse(identifier: string) {
     try {
         await connectDB();
-        
-        let course;
-        if (mongoose.Types.ObjectId.isValid(identifier)) {
-            course = await Course.findById(identifier).populate("instructorIds", "name image").lean();
-        } else {
-            course = await Course.findOne({ slug: identifier, isPublished: true }).populate("instructorIds", "name image").lean();
-        }
+
+        const decodedIdentifier = decodeURIComponent(identifier);
+        const query = (mongoose.Types.ObjectId.isValid(identifier) || mongoose.Types.ObjectId.isValid(decodedIdentifier))
+            ? { _id: mongoose.Types.ObjectId.isValid(identifier) ? identifier : decodedIdentifier, isPublished: true }
+            : { slug: { $in: [identifier, decodedIdentifier] }, isPublished: true };
+
+        const course = await Course.findOne(query).populate("instructorIds", "name image").lean();
 
         if (!course) return { success: false, error: "Course not found" };
 
