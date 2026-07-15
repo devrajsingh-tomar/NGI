@@ -38,11 +38,15 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
     const [warnings, setWarnings] = useState(0);
     const lastWarnedRef = useRef(0);
 
-    // Resolve params
+    // Resolve params safely (handles both Promise and synchronous object)
     useEffect(() => {
-        params.then((p) => {
-            setQuizId(p.quizId);
-        });
+        if (params && typeof (params as any).then === "function") {
+            params.then((p) => {
+                if (p?.quizId) setQuizId(p.quizId);
+            });
+        } else if (params && (params as any).quizId) {
+            setQuizId((params as any).quizId);
+        }
     }, [params]);
 
     useEffect(() => {
@@ -224,7 +228,22 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
         );
     }
 
-    const currentQuestion = quiz.questions[state.currentQuestionIndex];
+    const currentQuestion = quiz?.questions?.[state.currentQuestionIndex];
+
+    if (!quiz?.questions || quiz.questions.length === 0 || !currentQuestion) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-white p-8 text-center animate-in fade-in duration-500">
+                <AlertCircle className="w-20 h-20 text-amber-500 mb-6" />
+                <h2 className="text-3xl font-black text-slate-900 mb-2">No Questions Available</h2>
+                <p className="max-w-md text-slate-500 font-medium mb-8">
+                    This mock test does not contain any questions or could not be loaded properly.
+                </p>
+                <Button onClick={() => router.back()} variant="outline" className="h-12 px-8 rounded-xl font-bold">
+                    Go Back
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div 
