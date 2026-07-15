@@ -10,21 +10,34 @@ interface VideoPlayerProps {
     type: "VIDEO" | "PDF" | "QUIZ";
     onComplete?: () => void;
 }
+function getYouTubeEmbedUrl(url: string): string | null {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+        return `https://www.youtube.com/embed/${match[2]}`;
+    }
+    const shortsRegExp = /youtube\.com\/shorts\/([^#\&\?]*)/;
+    const shortsMatch = url.match(shortsRegExp);
+    if (shortsMatch && shortsMatch[1].length === 11) {
+        return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+    }
+    return null;
+}
 
 export default function VideoPlayer({ title, url, type, onComplete }: VideoPlayerProps) {
     const [completed, setCompleted] = useState(false);
 
     // Simple YouTube ID check (if not full URL)
     const isYouTubeId = url && !url.includes("http") && url.length < 20;
-    const isYouTubeUrl = url && (url.includes("youtube.com") || url.includes("youtu.be"));
+    const embedUrl = getYouTubeEmbedUrl(url);
+    const isYouTubeUrl = !!embedUrl;
 
     let videoSrc = url;
     if (isYouTubeId) {
         videoSrc = `https://www.youtube.com/embed/${url}?autoplay=1&rel=0`;
-    } else if (isYouTubeUrl) {
-        // Extract ID if needed, but embed URL usually works if formatted correctly
-        // Simple replace for watch?v= -> embed/
-        videoSrc = url.replace("watch?v=", "embed/");
+    } else if (embedUrl) {
+        videoSrc = `${embedUrl}?autoplay=1&rel=0`;
     }
 
     const handleVideoEnd = () => {
