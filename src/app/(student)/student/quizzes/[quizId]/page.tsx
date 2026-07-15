@@ -217,86 +217,90 @@ export default function StudentQuizLivePage({ params }: { params: Promise<{ quiz
         );
     }
 
-    if (quiz.security?.requireFullscreen && !isFullscreen) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white p-8 text-center" ref={containerRef}>
-                <Maximize className="w-20 h-20 text-primary mb-6 animate-pulse" />
-                <h2 className="text-3xl font-black mb-4">Fullscreen Required</h2>
-                <p className="text-slate-400 max-w-lg mx-auto font-medium mb-8">
-                    You must be in full-screen mode to take this exam.
-                </p>
-                <Button size="lg" className="h-14 px-10 text-lg font-black" onClick={requestFullscreen}>
-                    Enter Fullscreen & Start Exam
-                </Button>
-            </div>
-        );
-    }
-
     const currentQuestion = quiz.questions[state.currentQuestionIndex];
 
     return (
-        <div ref={containerRef} className="select-none h-full w-full fixed inset-0 overflow-hidden bg-white">
-            <ExamLayout
-                exam={quiz}
-                user={{ 
-                    name: session?.user?.name || "Student", 
-                    loginId: session?.user?.id?.substring(0, 8).toUpperCase() || "A13DE8BF",
-                    image: session?.user?.image
-                }}
-                currentQuestionIndex={state.currentQuestionIndex}
-                totalQuestions={quiz.questions.length}
-                timeLeft={state.timer}
-                language={language}
-                onLanguageChange={setLanguage}
-                onQuestionSelect={navigateTo}
-                onFinish={handleSubmit}
-                answers={state.answers}
-                flagged={state.flagged}
-            >
-                <QuestionRenderer
-                    question={currentQuestion}
-                    value={state.answers[currentQuestion._id]?.value}
-                    onChange={handleAnswerChange}
+        <div 
+            ref={containerRef} 
+            className={cn(
+                "select-none h-full w-full fixed inset-0 overflow-hidden",
+                quiz.security?.requireFullscreen && !isFullscreen ? "bg-slate-900" : "bg-white"
+            )}
+        >
+            {quiz.security?.requireFullscreen && !isFullscreen ? (
+                <div className="flex flex-col items-center justify-center h-full w-full text-white p-8 text-center">
+                    <Maximize className="w-20 h-20 text-primary mb-6 animate-pulse" />
+                    <h2 className="text-3xl font-black mb-4">Fullscreen Required</h2>
+                    <p className="text-slate-400 max-w-lg mx-auto font-medium mb-8">
+                        You must be in full-screen mode to take this exam.
+                    </p>
+                    <Button size="lg" className="h-14 px-10 text-lg font-black" onClick={requestFullscreen}>
+                        Enter Fullscreen & Start Exam
+                    </Button>
+                </div>
+            ) : (
+                <ExamLayout
+                    exam={quiz}
+                    user={{ 
+                        name: session?.user?.name || "Student", 
+                        loginId: session?.user?.id?.substring(0, 8).toUpperCase() || "A13DE8BF",
+                        image: session?.user?.image
+                    }}
+                    currentQuestionIndex={state.currentQuestionIndex}
+                    totalQuestions={quiz.questions.length}
+                    timeLeft={state.timer}
                     language={language}
-                    userName="Student"
-                    isLastQuestion={state.currentQuestionIndex === quiz.questions.length - 1}
-                    onSave={() => {
-                        if (state.currentQuestionIndex < quiz.questions.length - 1) {
-                            navigateTo(state.currentQuestionIndex + 1);
-                        } else {
-                            handleSubmit(false);
-                        }
-                    }}
-                    onReset={() => {
-                        setState(prev => {
-                            const newAnswers = { ...prev.answers };
-                            delete newAnswers[currentQuestion._id];
-                            return {
-                                ...prev,
-                                answers: newAnswers,
-                                attempted: prev.attempted.filter(id => id !== currentQuestion._id)
-                            };
-                        });
-                    }}
-                    onMark={() => {
-                        setState(prev => {
-                            const isCurrentlyFlagged = prev.flagged.includes(state.currentQuestionIndex);
-                            const newFlagged = isCurrentlyFlagged
-                                ? prev.flagged.filter(idx => idx !== state.currentQuestionIndex)
-                                : [...prev.flagged, state.currentQuestionIndex];
+                    onLanguageChange={setLanguage}
+                    onQuestionSelect={navigateTo}
+                    onFinish={handleSubmit}
+                    answers={state.answers}
+                    flagged={state.flagged}
+                >
+                    <QuestionRenderer
+                        question={currentQuestion}
+                        value={state.answers[currentQuestion._id]?.value}
+                        onChange={handleAnswerChange}
+                        language={language}
+                        userName="Student"
+                        isLastQuestion={state.currentQuestionIndex === quiz.questions.length - 1}
+                        onSave={() => {
+                            if (state.currentQuestionIndex < quiz.questions.length - 1) {
+                                navigateTo(state.currentQuestionIndex + 1);
+                            } else {
+                                handleSubmit(false);
+                            }
+                        }}
+                        onReset={() => {
+                            setState(prev => {
+                                const newAnswers = { ...prev.answers };
+                                delete newAnswers[currentQuestion._id];
+                                return {
+                                    ...prev,
+                                    answers: newAnswers,
+                                    attempted: prev.attempted.filter(id => id !== currentQuestion._id)
+                                };
+                            });
+                        }}
+                        onMark={() => {
+                            setState(prev => {
+                                const isCurrentlyFlagged = prev.flagged.includes(state.currentQuestionIndex);
+                                const newFlagged = isCurrentlyFlagged
+                                    ? prev.flagged.filter(idx => idx !== state.currentQuestionIndex)
+                                    : [...prev.flagged, state.currentQuestionIndex];
+                                
+                                return {
+                                    ...prev,
+                                    flagged: newFlagged
+                                };
+                            });
                             
-                            return {
-                                ...prev,
-                                flagged: newFlagged
-                            };
-                        });
-                        
-                        if (state.currentQuestionIndex < quiz.questions.length - 1) {
-                            navigateTo(state.currentQuestionIndex + 1);
-                        }
-                    }}
-                />
-            </ExamLayout>
+                            if (state.currentQuestionIndex < quiz.questions.length - 1) {
+                                navigateTo(state.currentQuestionIndex + 1);
+                            }
+                        }}
+                    />
+                </ExamLayout>
+            )}
 
             {isSubmitting && (
                 <div className="fixed inset-0 bg-white/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
