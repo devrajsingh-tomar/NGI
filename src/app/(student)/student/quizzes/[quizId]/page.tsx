@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, AlertCircle, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 import ExamLayout from "@/components/exams/engine/ExamLayout";
 import QuestionRenderer from "@/components/exams/engine/QuestionRenderer";
