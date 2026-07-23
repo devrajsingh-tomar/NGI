@@ -4,9 +4,11 @@ export interface IQuiz extends Document {
     title: string;
     logo?: string;
     courseId?: mongoose.Types.ObjectId;
-
     examCode?: string;
     batchIds?: mongoose.Types.ObjectId[];
+    courseName?: string;
+    chapterName?: string;
+    difficultyLevel?: string;
     settings: {
         timeLimit: number; // in minutes
         totalMarks: number;
@@ -52,6 +54,10 @@ const QuizSchema = new Schema<IQuiz>(
         description: { type: String },
         courseId: { type: Schema.Types.ObjectId, ref: "Course" },
         batchIds: [{ type: Schema.Types.ObjectId, ref: "Batch" }],
+        examCode: { type: String },
+        courseName: { type: String },
+        chapterName: { type: String },
+        difficultyLevel: { type: String },
         settings: {
             timeLimit: { type: Number, required: true },
             totalMarks: { type: Number, required: true },

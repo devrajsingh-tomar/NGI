@@ -44,7 +44,10 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
         title: "",
         description: "",
         courseId: "",
-        examCode: "M1-R5",
+        courseName: "",
+        examCode: "",
+        chapterName: "",
+        difficultyLevel: "Level 1 (Easy)",
         isMockTest: false,
         paperSetId: "",
         pricing: {
@@ -85,7 +88,7 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
         const [cRes, pRes, qRes] = await Promise.all([
             getAllCourses(), 
             getPaperSets(),
-             getAdminQuiz(id)
+            getAdminQuiz(id)
         ]);
         
         if (cRes.success) setCourses(cRes.courses);
@@ -96,6 +99,10 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
             setFormData({
                 ...q,
                 courseId: q.courseId?._id || q.courseId,
+                courseName: q.courseName || "",
+                examCode: q.examCode || "",
+                chapterName: q.chapterName || "",
+                difficultyLevel: q.difficultyLevel || "Level 1 (Easy)",
                 schedule: {
                     ...q.schedule,
                     startDate: q.schedule.startDate ? new Date(q.schedule.startDate).toISOString().slice(0, 16) : "",
@@ -107,6 +114,15 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
             router.push("/admin/mock-tests");
         }
         setLoading(false);
+    };
+
+    const handleCourseChange = (id: string) => {
+        const selected = courses.find(c => c._id === id);
+        setFormData({
+            ...formData,
+            courseId: id,
+            courseName: selected ? selected.title : ""
+        });
     };
 
     const handlePaperSetSelect = (setId: string) => {
@@ -225,27 +241,75 @@ export default function EditMockTestPage({ params }: { params: Promise<{ id: str
                                     <select 
                                         className="w-full h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-900 outline-none"
                                         value={formData.courseId}
-                                        onChange={(e) => setFormData({...formData, courseId: e.target.value})}
+                                        onChange={(e) => handleCourseChange(e.target.value)}
                                     >
-                                        <option value="">Select Course</option>
+                                        <option value="">No Course (Upload Publicly)</option>
                                         {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
                                     </select>
                                 </div>
-                                {courses.find(c => c._id === formData.courseId)?.title === "O Level" && (
+
+                                {!formData.courseId && (
                                     <div className="space-y-2">
-                                        <Label className="font-bold text-slate-700 ml-2">Exam Code</Label>
+                                        <Label className="font-bold text-slate-700 ml-2">Custom Course Name</Label>
+                                        <Input 
+                                            placeholder="e.g. O Level"
+                                            className="h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold"
+                                            value={formData.courseName}
+                                            onChange={(e) => setFormData({...formData, courseName: e.target.value})}
+                                        />
+                                    </div>
+                                )}
+
+                                {(formData.courseName?.toLowerCase() === "o level" || courses.find(c => c._id === formData.courseId)?.title?.toLowerCase() === "o level") ? (
+                                    <div className="space-y-2">
+                                        <Label className="font-bold text-slate-700 ml-2">Paper Code (O Level)</Label>
                                         <select 
                                             className="w-full h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-900 outline-none"
                                             value={formData.examCode}
                                             onChange={(e) => setFormData({...formData, examCode: e.target.value})}
                                         >
-                                            <option value="M1-R5">M1-R5</option>
-                                            <option value="M2-R5">M2-R5</option>
-                                            <option value="M3-R5">M3-R5</option>
-                                            <option value="M4-R5">M4-R5</option>
+                                            <option value="">Select Paper</option>
+                                            <option value="M1-R5.1">M1-R5.1</option>
+                                            <option value="M2-R5.1">M2-R5.1</option>
+                                            <option value="M3-R5.1">M3-R5.1</option>
+                                            <option value="M4-R5.1">M4-R5.1</option>
                                         </select>
                                     </div>
+                                ) : (
+                                    <div className="space-y-2">
+                                        <Label className="font-bold text-slate-700 ml-2">Exam Code / Paper Code</Label>
+                                        <Input 
+                                            placeholder="e.g. CCC"
+                                            className="h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold"
+                                            value={formData.examCode}
+                                            onChange={(e) => setFormData({...formData, examCode: e.target.value})}
+                                        />
+                                    </div>
                                 )}
+
+                                <div className="space-y-2">
+                                    <Label className="font-bold text-slate-700 ml-2">Chapter Name</Label>
+                                    <Input 
+                                        placeholder="e.g. Introduction of Computer"
+                                        className="h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold"
+                                        value={formData.chapterName}
+                                        onChange={(e) => setFormData({...formData, chapterName: e.target.value})}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="font-bold text-slate-700 ml-2">Difficulty Level</Label>
+                                    <select 
+                                        className="w-full h-14 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-900 outline-none"
+                                        value={formData.difficultyLevel}
+                                        onChange={(e) => setFormData({...formData, difficultyLevel: e.target.value})}
+                                    >
+                                        <option value="Level 1 (Easy)">Level 1 (Easy)</option>
+                                        <option value="Level 2 (Moderate)">Level 2 (Moderate)</option>
+                                        <option value="Level 3 (High)">Level 3 (High)</option>
+                                    </select>
+                                </div>
+
                                 <div className="space-y-2 lg:col-span-2">
                                     <Label className="font-bold text-slate-700 ml-2">Change Paper Set (Optional)</Label>
                                     <select 

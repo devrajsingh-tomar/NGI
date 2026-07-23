@@ -123,23 +123,43 @@ export default function StudentQuizzesPage() {
                                 <div className={`absolute top-0 right-0 w-48 h-48 rounded-full -mr-24 -mt-24 transition-all duration-700 ${
                                     isPaid ? "bg-emerald-500/5 group-hover:bg-emerald-500/10" : "bg-primary/5 group-hover:bg-primary/10"
                                 }`} />
-
                                 <div className="flex-1 relative z-10 flex flex-col">
                                     <div className="flex justify-between items-start mb-6">
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2">
-                                                <Badge className={`${isPaid ? "bg-emerald-500 text-white" : "bg-primary text-white"} border-none text-[9px] font-black uppercase tracking-widest px-3 py-1`}>
-                                                    {isPaid ? `₹${quiz.pricing.amount}` : "Free Test"}
-                                                </Badge>
-                                                {isPending && <Badge className="bg-amber-500 text-white border-none text-[9px] font-black uppercase tracking-widest px-3 py-1 animate-pulse">Pending Approval</Badge>}
-                                            </div>
-                                            <h3 className="text-3xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight">
-                                                {quiz.title}
-                                            </h3>
-                                        </div>
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                                            hasAccess ? "bg-emerald-50 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white" : "bg-slate-50 text-slate-300"
-                                        }`}>
+                                             <div className="flex flex-wrap gap-1.5 items-center">
+                                                 <Badge className={`${isPaid ? "bg-emerald-500 text-white" : "bg-primary text-white"} border-none text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5`}>
+                                                     {isPaid ? `₹${quiz.pricing.amount}` : "Free Test"}
+                                                 </Badge>
+                                                 {isPending && <Badge className="bg-amber-500 text-white border-none text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 animate-pulse">Pending Approval</Badge>}
+                                                 <Badge className="bg-slate-100 text-slate-700 border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5">
+                                                     {quiz.courseId?.title || quiz.courseName || "General Mock Test"}
+                                                 </Badge>
+                                                 {quiz.examCode && (
+                                                     <Badge className="bg-indigo-50 text-indigo-600 border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5">
+                                                         {quiz.examCode}
+                                                     </Badge>
+                                                 )}
+                                                 {quiz.difficultyLevel && (
+                                                     <Badge className={`border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5 ${
+                                                         quiz.difficultyLevel.includes("Easy") ? "bg-emerald-50 text-emerald-600" :
+                                                         quiz.difficultyLevel.includes("Moderate") ? "bg-amber-50 text-amber-600" : "bg-rose-50 text-rose-600"
+                                                     }`}>
+                                                         {quiz.difficultyLevel}
+                                                     </Badge>
+                                                 )}
+                                             </div>
+                                             <h3 className="text-3xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight">
+                                                 {quiz.title}
+                                             </h3>
+                                             {quiz.chapterName && (
+                                                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                                                     Chapter: <span className="text-slate-600 font-extrabold">{quiz.chapterName}</span>
+                                                 </p>
+                                             )}
+                                         </div>
+                                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                                             hasAccess ? "bg-emerald-50 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white" : "bg-slate-50 text-slate-300"
+                                         }`}>
                                             {hasAccess ? <Unlock className="w-7 h-7" /> : <Lock className="w-7 h-7" />}
                                         </div>
                                     </div>

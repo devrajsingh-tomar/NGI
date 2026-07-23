@@ -33,7 +33,11 @@ export default function PublicExamsPage() {
 
     const filteredExams = exams.filter(e => 
         e.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        e.courseId?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+        e.courseId?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.courseName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.examCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.chapterName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.difficultyLevel?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -124,15 +128,35 @@ export default function PublicExamsPage() {
                                     className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col"
                                 >
                                     <div className="flex justify-between items-start mb-8">
-                                        <div className="space-y-3">
-                                            <Badge className="bg-primary/5 text-primary border-none text-[10px] font-black tracking-widest uppercase px-3 py-1">
-                                                {exam.courseId?.title || "General Mock Test"}
-                                            </Badge>
-                                            <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover:text-primary transition-colors">
-                                                {exam.title}
-                                            </h3>
-                                        </div>
-                                        <div className="w-16 h-16 rounded-[1.5rem] bg-slate-50 text-slate-400 group-hover:bg-primary group-hover:text-white transition-all duration-500 flex items-center justify-center shrink-0 shadow-inner">
+                                         <div className="space-y-3">
+                                             <div className="flex flex-wrap gap-1.5 items-center">
+                                                 <Badge className="bg-primary/5 text-primary border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5">
+                                                     {exam.courseId?.title || exam.courseName || "General Mock Test"}
+                                                 </Badge>
+                                                 {exam.examCode && (
+                                                     <Badge className="bg-indigo-50 text-indigo-600 border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5">
+                                                         {exam.examCode}
+                                                     </Badge>
+                                                 )}
+                                                 {exam.difficultyLevel && (
+                                                     <Badge className={`border-none text-[9px] font-black tracking-widest uppercase px-2.5 py-0.5 ${
+                                                         exam.difficultyLevel.includes("Easy") ? "bg-emerald-50 text-emerald-600" :
+                                                         exam.difficultyLevel.includes("Moderate") ? "bg-amber-50 text-amber-600" : "bg-rose-50 text-rose-600"
+                                                     }`}>
+                                                         {exam.difficultyLevel}
+                                                     </Badge>
+                                                 )}
+                                             </div>
+                                             <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover:text-primary transition-colors">
+                                                 {exam.title}
+                                             </h3>
+                                             {exam.chapterName && (
+                                                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                                                     Chapter: <span className="text-slate-600 font-extrabold">{exam.chapterName}</span>
+                                                 </p>
+                                             )}
+                                         </div>
+                                         <div className="w-16 h-16 rounded-[1.5rem] bg-slate-50 text-slate-400 group-hover:bg-primary group-hover:text-white transition-all duration-500 flex items-center justify-center shrink-0 shadow-inner">
                                             <Sparkles className="w-8 h-8" />
                                         </div>
                                     </div>
