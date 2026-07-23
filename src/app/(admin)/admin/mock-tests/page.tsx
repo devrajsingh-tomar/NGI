@@ -174,18 +174,18 @@ export default function MockTestDashboard() {
                     </div>
 
                     <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-sm">
-                        <h3 className="text-lg font-black text-slate-900 mb-6 tracking-tight">Recent Logs</h3>
+                        <h3 className="text-lg font-black text-slate-900 mb-6 tracking-tight">Recently Added Questions</h3>
                         <div className="space-y-6">
                             {data?.logs?.length > 0 ? data.logs.map((log: any, i: number) => (
                                 <div key={i} className="flex gap-4">
                                     <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-bold text-slate-700 leading-tight truncate" dangerouslySetInnerHTML={{ __html: log.content?.en }} />
-                                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Added in {log.subject}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Subject: {log.subject} {log.topic ? `| Topic: ${log.topic}` : ""}</p>
                                     </div>
                                 </div>
                             )) : (
-                                <p className="text-sm text-slate-400 italic">No recent activity logged.</p>
+                                <p className="text-sm text-slate-400 italic">No recent questions added.</p>
                             )}
                         </div>
                     </div>

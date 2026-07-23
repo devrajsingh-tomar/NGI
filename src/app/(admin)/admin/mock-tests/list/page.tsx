@@ -106,19 +106,28 @@ export default function AdminQuizzesPage() {
                                             </div>
                                             <div>
                                                 <p className="font-bold text-slate-900 text-sm md:text-base leading-tight">{quiz.title}</p>
-                                                <div className="flex flex-wrap items-center gap-2 mt-1.5 opacity-80">
                                                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">
-                                                        {quiz.courseId?.title || "Standalone"}
+                                                        {quiz.courseId?.title || quiz.courseName || "Standalone"}
                                                     </p>
-                                                    <div className="flex gap-1">
+                                                    <div className="flex gap-1 flex-wrap items-center">
                                                         {quiz.isMockTest ? (
                                                             <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-none text-[8px] px-1.5 h-3.5">MOCK</Badge>
                                                         ) : (
                                                             <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none text-[8px] px-1.5 h-3.5">REGULAR</Badge>
                                                         )}
                                                         {quiz.isPublished ? <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none text-[8px] px-1.5 h-3.5">LIVE</Badge> : <Badge className="bg-slate-100 text-slate-400 hover:bg-slate-100 border-none text-[8px] px-1.5 h-3.5">DRAFT</Badge>}
+                                                        {quiz.examCode && (
+                                                            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none text-[8px] px-1.5 h-3.5">{quiz.examCode}</Badge>
+                                                        )}
+                                                        {quiz.difficultyLevel && (
+                                                            <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100 border-none text-[8px] px-1.5 h-3.5">{quiz.difficultyLevel}</Badge>
+                                                        )}
                                                     </div>
-                                                </div>
+                                                    {quiz.chapterName && (
+                                                        <span className="text-[9px] font-bold text-slate-500 block w-full">
+                                                            Chapter: {quiz.chapterName}
+                                                        </span>
+                                                    )}
                                             </div>
                                         </div>
                                     </td>

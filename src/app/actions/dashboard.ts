@@ -20,10 +20,12 @@ export async function getMockTestStats() {
         const session = await getServerSession(authOptions);
         if (session?.user?.role !== "ADMIN") return { success: false, error: "Unauthorized" };
 
+        const mockTestIds = await Quiz.find({ isMockTest: true }).distinct("_id");
+
         const [totalQuestions, totalQuizzes, totalAttempts, latestLogs] = await Promise.all([
             Question.countDocuments(),
-            Quiz.countDocuments(),
-            Attempt.countDocuments(),
+            Quiz.countDocuments({ isMockTest: true }),
+            Attempt.countDocuments({ quizId: { $in: mockTestIds } }),
             Question.find().sort({ createdAt: -1 }).limit(3).lean()
         ]);
 
@@ -36,6 +38,7 @@ export async function getMockTestStats() {
         return { success: false, error: error.message };
     }
 }
+
 export async function getDashboardStats() {
     try {
         await connectDB();
