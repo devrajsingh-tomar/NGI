@@ -52,7 +52,11 @@ export default function NewPaperSetPage() {
 
     // Filtering for question bank
     const [searchQ, setSearchQ] = useState("");
-    const [useBlueprintFilters, setUseBlueprintFilters] = useState(false);
+    const [filterCourse, setFilterCourse] = useState("");
+    const [filterExamCode, setFilterExamCode] = useState("");
+    const [filterSubject, setFilterSubject] = useState("");
+    const [filterDifficulty, setFilterDifficulty] = useState("");
+    const [filterType, setFilterType] = useState("");
 
     useEffect(() => {
         loadData();
@@ -171,13 +175,22 @@ export default function NewPaperSetPage() {
         setSubmitting(false);
     };
 
-    const filteredPool = allQuestions.filter(q => {
-        const matchesCourse = !useBlueprintFilters || !formData.courseId || q.courseId?._id === formData.courseId;
-        const matchesExamCode = !useBlueprintFilters || !formData.examCode || q.examCode === formData.examCode;
-        const matchesSubject = !useBlueprintFilters || !formData.subject || q.subject?.toLowerCase() === formData.subject?.toLowerCase();
-        const matchesSearch = !searchQ || q.content?.en?.toLowerCase().includes(searchQ.toLowerCase());
-        return matchesCourse && matchesExamCode && matchesSubject && matchesSearch;
-    });
+    const uniqueSubjects = Array.from(new Set(allQuestions.map(q => q.subject).filter(Boolean))) as string[];
+
+    const filteredPool = allQuestions
+        .filter(q => {
+            const matchesCourse = !filterCourse || q.courseId?._id === filterCourse || q.courseId === filterCourse;
+            const matchesExamCode = !filterExamCode || q.examCode?.toLowerCase() === filterExamCode.toLowerCase();
+            const matchesSubject = !filterSubject || q.subject?.toLowerCase() === filterSubject.toLowerCase();
+            const matchesDifficulty = !filterDifficulty || q.difficulty === filterDifficulty;
+            const matchesType = !filterType || q.type === filterType;
+            const matchesSearch = !searchQ || 
+                q.content?.en?.toLowerCase().includes(searchQ.toLowerCase()) ||
+                q.content?.hi?.toLowerCase().includes(searchQ.toLowerCase());
+            
+            return matchesCourse && matchesExamCode && matchesSubject && matchesDifficulty && matchesType && matchesSearch;
+        })
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return (
         <div className="max-w-7xl mx-auto py-12 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -321,7 +334,7 @@ export default function NewPaperSetPage() {
                 {/* Right Panel: Question Selection */}
                 <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm flex flex-col h-[800px]">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-4">
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900 tracking-tight">Select Test Questions</h2>
                                 <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-1">Showing pool from {filteredPool.length} items</p>
@@ -337,6 +350,68 @@ export default function NewPaperSetPage() {
                                     />
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Interactive Dropdown Filter Bar */}
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterCourse}
+                                onChange={(e) => setFilterCourse(e.target.value)}
+                            >
+                                <option value="">All Courses</option>
+                                {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
+                            </select>
+
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterExamCode}
+                                onChange={(e) => setFilterExamCode(e.target.value)}
+                            >
+                                <option value="">All Paper Codes</option>
+                                <option value="M1-R5.1">M1-R5.1</option>
+                                <option value="M2-R5.1">M2-R5.1</option>
+                                <option value="M3-R5.1">M3-R5.1</option>
+                                <option value="M4-R5.1">M4-R5.1</option>
+                                <option value="M1-R5">M1-R5</option>
+                                <option value="M2-R5">M2-R5</option>
+                                <option value="M3-R5">M3-R5</option>
+                                <option value="M4-R5">M4-R5</option>
+                            </select>
+
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterSubject}
+                                onChange={(e) => setFilterSubject(e.target.value)}
+                            >
+                                <option value="">All Subjects</option>
+                                {uniqueSubjects.map(subj => <option key={subj} value={subj}>{subj}</option>)}
+                            </select>
+
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterDifficulty}
+                                onChange={(e) => setFilterDifficulty(e.target.value)}
+                            >
+                                <option value="">All Difficulties</option>
+                                <option value="EASY">Easy</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HARD">Hard</option>
+                            </select>
+
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterType}
+                                onChange={(e) => setFilterType(e.target.value)}
+                            >
+                                <option value="">All Types</option>
+                                <option value="MCQ_SINGLE">MCQ Single</option>
+                                <option value="MCQ_MULTIPLE">MCQ Multiple</option>
+                                <option value="TRUE_FALSE">True / False</option>
+                                <option value="NUMERIC">Numeric</option>
+                                <option value="MATCH_THE_FOLLOWING">Match Following</option>
+                                <option value="ASSERTION_REASON">Assertion Reason</option>
+                            </select>
                         </div>
 
                         <div className="flex gap-2 mb-6">
