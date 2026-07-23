@@ -10,18 +10,29 @@ interface VideoPlayerProps {
     type: "VIDEO" | "PDF" | "QUIZ";
     onComplete?: () => void;
 }
+
 function getYouTubeEmbedUrl(url: string): string | null {
     if (!url) return null;
+    
+    // 1. Check for shorts
+    const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i);
+    if (shortsMatch && shortsMatch[1].length === 11) {
+        return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+    }
+    
+    // 2. Check for live stream
+    const liveMatch = url.match(/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/i);
+    if (liveMatch && liveMatch[1].length === 11) {
+        return `https://www.youtube.com/embed/${liveMatch[1]}`;
+    }
+    
+    // 3. Check for standard watch, embed, v, or youtu.be
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     if (match && match[2].length === 11) {
         return `https://www.youtube.com/embed/${match[2]}`;
     }
-    const shortsRegExp = /youtube\.com\/shorts\/([^#\&\?]*)/;
-    const shortsMatch = url.match(shortsRegExp);
-    if (shortsMatch && shortsMatch[1].length === 11) {
-        return `https://www.youtube.com/embed/${shortsMatch[1]}`;
-    }
+    
     return null;
 }
 

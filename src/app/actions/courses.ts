@@ -172,14 +172,24 @@ export async function createLesson(courseId: string, data: any) {
 
         // Automatic YouTube ID extraction logic if needed
         if ((data.type === "YOUTUBE_LIVE" || data.type === "YOUTUBE_RECORDED") && data.videoUrl) {
-           const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-           const match = data.videoUrl.match(regExp);
-           const extractedId = (match && match[7].length === 11) ? match[7] : null;
+           let extractedId: string | null = null;
+           const shortsMatch = data.videoUrl.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i);
+           if (shortsMatch) {
+              extractedId = shortsMatch[1];
+           } else {
+              const liveMatch = data.videoUrl.match(/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/i);
+              if (liveMatch) {
+                 extractedId = liveMatch[1];
+              } else {
+                 const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                 const match = data.videoUrl.match(regExp);
+                 extractedId = (match && match[7].length === 11) ? match[7] : null;
+              }
+           }
            lessonData.videoId = extractedId || data.videoId;
            lessonData.videoType = data.type === "YOUTUBE_LIVE" ? "youtube_live" : "youtube_recorded";
            lessonData.isLive = data.type === "YOUTUBE_LIVE";
         }
-
         // VIDEO / PDF: store the URL
         if (data.type !== "QUIZ" && data.type !== "YOUTUBE_LIVE" && data.type !== "YOUTUBE_RECORDED") {
             lessonData.contentUrl = data.contentUrl ?? "";
@@ -374,9 +384,20 @@ export async function updateLesson(lessonId: string, courseId: string, data: any
         };
 
         if ((data.type === "YOUTUBE_LIVE" || data.type === "YOUTUBE_RECORDED") && data.videoUrl) {
-           const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-           const match = data.videoUrl.match(regExp);
-           const extractedId = (match && match[7].length === 11) ? match[7] : null;
+           let extractedId: string | null = null;
+           const shortsMatch = data.videoUrl.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/i);
+           if (shortsMatch) {
+              extractedId = shortsMatch[1];
+           } else {
+              const liveMatch = data.videoUrl.match(/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/i);
+              if (liveMatch) {
+                 extractedId = liveMatch[1];
+              } else {
+                 const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                 const match = data.videoUrl.match(regExp);
+                 extractedId = (match && match[7].length === 11) ? match[7] : null;
+              }
+           }
            update.videoId = extractedId || data.videoId;
            update.videoType = data.type === "YOUTUBE_LIVE" ? "youtube_live" : "youtube_recorded";
            update.isLive = data.type === "YOUTUBE_LIVE";
