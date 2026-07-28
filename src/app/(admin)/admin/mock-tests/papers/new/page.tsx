@@ -55,6 +55,7 @@ export default function NewPaperSetPage() {
     const [filterCourse, setFilterCourse] = useState("");
     const [filterExamCode, setFilterExamCode] = useState("");
     const [filterSubject, setFilterSubject] = useState("");
+    const [filterTopic, setFilterTopic] = useState("");
     const [filterDifficulty, setFilterDifficulty] = useState("");
     const [filterType, setFilterType] = useState("");
 
@@ -176,19 +177,21 @@ export default function NewPaperSetPage() {
     };
 
     const uniqueSubjects = Array.from(new Set(allQuestions.map(q => q.subject).filter(Boolean))) as string[];
+    const uniqueTopics = Array.from(new Set(allQuestions.map(q => q.topic).filter(Boolean))) as string[];
 
     const filteredPool = allQuestions
         .filter(q => {
             const matchesCourse = !filterCourse || q.courseId?._id === filterCourse || q.courseId === filterCourse;
             const matchesExamCode = !filterExamCode || q.examCode?.toLowerCase() === filterExamCode.toLowerCase();
             const matchesSubject = !filterSubject || q.subject?.toLowerCase() === filterSubject.toLowerCase();
+            const matchesTopic = !filterTopic || q.topic?.toLowerCase() === filterTopic.toLowerCase();
             const matchesDifficulty = !filterDifficulty || q.difficulty === filterDifficulty;
             const matchesType = !filterType || q.type === filterType;
             const matchesSearch = !searchQ || 
                 q.content?.en?.toLowerCase().includes(searchQ.toLowerCase()) ||
                 q.content?.hi?.toLowerCase().includes(searchQ.toLowerCase());
             
-            return matchesCourse && matchesExamCode && matchesSubject && matchesDifficulty && matchesType && matchesSearch;
+            return matchesCourse && matchesExamCode && matchesSubject && matchesTopic && matchesDifficulty && matchesType && matchesSearch;
         })
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -353,7 +356,7 @@ export default function NewPaperSetPage() {
                         </div>
 
                         {/* Interactive Dropdown Filter Bar */}
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                             <select
                                 className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
                                 value={filterCourse}
@@ -386,6 +389,15 @@ export default function NewPaperSetPage() {
                             >
                                 <option value="">All Subjects</option>
                                 {uniqueSubjects.map(subj => <option key={subj} value={subj}>{subj}</option>)}
+                            </select>
+
+                            <select
+                                className="h-10 bg-white border border-slate-200 rounded-lg px-2 text-[10px] font-bold text-slate-700 outline-none cursor-pointer"
+                                value={filterTopic}
+                                onChange={(e) => setFilterTopic(e.target.value)}
+                            >
+                                <option value="">All Topics</option>
+                                {uniqueTopics.map(topic => <option key={topic} value={topic}>{topic}</option>)}
                             </select>
 
                             <select
