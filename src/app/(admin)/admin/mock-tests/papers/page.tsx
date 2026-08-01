@@ -12,7 +12,8 @@ import {
     Layers,
     ChevronRight,
     ArrowUpRight,
-    Sparkles
+    Sparkles,
+    FileUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,13 +79,20 @@ export default function PaperSetsPage() {
                     </h1>
                     <p className="text-slate-500 mt-2 font-medium text-sm md:text-base">Create and manage your blueprint collections.</p>
                 </div>
-                
-                <Link href="/admin/mock-tests/papers/new">
-                    <Button className="w-full sm:w-auto rounded-2xl h-12 md:h-14 font-black gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
-                        <Plus className="w-5 h-5" />
-                        New Blueprint
-                    </Button>
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <Link href="/admin/mock-tests/papers/import" className="w-full sm:w-auto">
+                        <Button variant="outline" className="w-full sm:w-auto rounded-2xl h-12 md:h-14 font-black gap-2 px-8 border-slate-200 hover:scale-[1.02] transition-transform">
+                            <FileUp className="w-5 h-5 text-slate-500" />
+                            Import via Excel
+                        </Button>
+                    </Link>
+                    <Link href="/admin/mock-tests/papers/new" className="w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto rounded-2xl h-12 md:h-14 font-black gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
+                            <Plus className="w-5 h-5" />
+                            New Blueprint
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             {/* Toolbar */}

@@ -63,7 +63,7 @@ export async function bulkInsertQuestions(questions: any[]) {
         const inserted = await Question.insertMany(questions);
         revalidatePath("/admin/mock-tests/questions");
         revalidatePath("/admin/mock-tests");
-        return { success: true, count: inserted.length };
+        return { success: true, count: inserted.length, ids: inserted.map(q => q._id.toString()) };
     } catch (error: any) {
         return { success: false, error: error.message };
     }
