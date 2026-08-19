@@ -40,9 +40,11 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { getQuestions, deleteQuestion, bulkDeleteQuestions } from "@/app/actions/questions";
+import { getPaperSets } from "@/app/actions/paperSets";
 
 export default function QuestionBankPage() {
     const [questions, setQuestions] = useState<any[]>([]);
+    const [paperSets, setPaperSets] = useState<any[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [bulkLoading, setBulkLoading] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -50,6 +52,7 @@ export default function QuestionBankPage() {
     const [filterType, setFilterType] = useState("ALL");
     const [filterDifficulty, setFilterDifficulty] = useState("ALL");
     const [filterExamCode, setFilterExamCode] = useState("ALL");
+    const [filterAssignment, setFilterAssignment] = useState("ALL");
 
     useEffect(() => {
         loadQuestions();
@@ -57,11 +60,16 @@ export default function QuestionBankPage() {
 
     const loadQuestions = async () => {
         setLoading(true);
-        const res = await getQuestions();
-        if (res.success) {
-            setQuestions(res.questions);
+        const [qRes, pRes] = await Promise.all([getQuestions(), getPaperSets()]);
+        if (qRes.success) {
+            setQuestions(qRes.questions || []);
         } else {
-            toast.error(res.error);
+            toast.error(qRes.error);
+        }
+        if (pRes.success) {
+            setPaperSets(pRes.paperSets || []);
+        } else {
+            toast.error(pRes.error);
         }
         setLoading(false);
     };
@@ -109,6 +117,8 @@ export default function QuestionBankPage() {
         );
     };
 
+    const uniqueExamCodes = Array.from(new Set(questions.map(q => q.examCode).filter(Boolean))) as string[];
+
     const filteredQuestions = questions.filter(q => {
         const matchesSearch = q.content?.en?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              q.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -116,7 +126,12 @@ export default function QuestionBankPage() {
         const matchesType = filterType === "ALL" || q.type === filterType;
         const matchesDifficulty = filterDifficulty === "ALL" || q.difficulty === filterDifficulty;
         const matchesExamCode = filterExamCode === "ALL" || q.examCode === filterExamCode;
-        return matchesSearch && matchesType && matchesDifficulty && matchesExamCode;
+        const matchesAssignment = filterAssignment === "ALL" || (
+            filterAssignment === "UNASSIGNED"
+            ? !paperSets.some(ps => ps.questions?.includes(q._id))
+            : paperSets.some(ps => ps.questions?.includes(q._id))
+        );
+        return matchesSearch && matchesType && matchesDifficulty && matchesExamCode && matchesAssignment;
     });
 
     return (
@@ -178,17 +193,25 @@ export default function QuestionBankPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <select 
                         className="w-full h-12 md:h-14 rounded-[1.25rem] md:rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700 outline-none"
                         value={filterExamCode}
                         onChange={(e) => setFilterExamCode(e.target.value)}
                     >
                         <option value="ALL">All Exam Codes</option>
-                        <option value="M1-R5">M1-R5</option>
-                        <option value="M2-R5">M2-R5</option>
-                        <option value="M3-R5">M3-R5</option>
-                        <option value="M4-R5">M4-R5</option>
+                        {uniqueExamCodes.map(code => (
+                            <option key={code} value={code}>{code}</option>
+                        ))}
+                    </select>
+                    <select 
+                        className="w-full h-12 md:h-14 rounded-[1.25rem] md:rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700 outline-none"
+                        value={filterAssignment}
+                        onChange={(e) => setFilterAssignment(e.target.value)}
+                    >
+                        <option value="ALL">All Assignment Statuses</option>
+                        <option value="ASSIGNED">Assigned to Paper Set</option>
+                        <option value="UNASSIGNED">Unassigned Questions</option>
                     </select>
                     <select 
                         className="w-full h-12 md:h-14 rounded-[1.25rem] md:rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700 outline-none"
@@ -305,9 +328,25 @@ export default function QuestionBankPage() {
                                                  </Badge>
                                             </div>
                                             <div className="prose prose-sm font-bold text-slate-900 line-clamp-2 md:line-clamp-3 leading-relaxed" dangerouslySetInnerHTML={{ __html: q.content?.en }} />
-                                            <div className="flex flex-wrap items-center gap-1.5 mt-2 opacity-60">
-                                                <Badge variant="outline" className="text-[8px] font-black uppercase border-slate-200">ID: {q._id.slice(-4)}</Badge>
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight truncate max-w-[120px]">{q.topic}</span>
+                                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                                                <Badge variant="outline" className="text-[8px] font-black uppercase border-slate-200 opacity-60">ID: {q._id.slice(-4)}</Badge>
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight truncate max-w-[120px] opacity-60">{q.topic}</span>
+                                                {(() => {
+                                                    const assignedSets = paperSets.filter(ps => ps.questions?.includes(q._id));
+                                                    if (assignedSets.length === 0) {
+                                                        return (
+                                                            <Badge className="bg-rose-50 text-rose-600 border-rose-100 text-[8px] font-black uppercase tracking-tight">
+                                                                Not assigned to any paper set
+                                                            </Badge>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[8px] font-black uppercase tracking-tight">
+                                                                Assigned to: {assignedSets.map(ps => ps.name).join(", ")}
+                                                            </Badge>
+                                                        );
+                                                    }
+                                                })()}
                                             </div>
                                         </div>
                                     </TableCell>
